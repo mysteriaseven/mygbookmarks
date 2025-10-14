@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v1.0</title>
+<title>My Bookmarks v1.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:#f6faff; --card:#fff; --muted:#667085; --accent:#00a3ff; font-family:'Inter',sans-serif; }
@@ -64,7 +64,7 @@ input[type=text], textarea{width:100%;padding:10px;border-radius:8px;border:1px 
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v1.0</div>
+    <div id="versionInfo">v1.1</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -172,6 +172,16 @@ onAuthStateChanged(auth, async user => {
         
         const snap = await getDoc(doc(db, "bookmarks", currentUser.uid));
         BOOKMARKS = snap.exists() ? snap.data().categories || [] : [];
+        // Ensure showHome is explicitly set for all items to avoid undefined issues
+        BOOKMARKS.forEach(cat => {
+            if (cat.items) {
+                cat.items.forEach(item => {
+                    if (item.showHome === undefined) {
+                        item.showHome = false;
+                    }
+                });
+            }
+        });
         currentView = 'home';
         renderApp();
     } else {
@@ -286,7 +296,7 @@ function openModalForEdit(bookmarkId, categoryId) {
     $('#mTitle').value = bookmark.title;
     $('#mUrl').value = bookmark.url;
     $('#mIcon').value = bookmark.icon || '';
-    $('#mShowHome').checked = bookmark.showHome || false;
+    $('#mShowHome').checked = !!bookmark.showHome;  // Ensure boolean conversion
     $('#modal').classList.add('active');
 }
 
@@ -298,23 +308,33 @@ function openModalForAdd() {
     $('#modal').classList.add('active');
 }
 
-$('#saveModal').onclick = () => {
+$('#saveModal').onclick = async () => {
     const title = $('#mTitle').value.trim();
     const url = $('#mUrl').value.trim();
     if (!title || !url) return alert("Title and URL are required.");
 
-    const bookmarkData = { title, url, icon: $('#mIcon').value.trim(), showHome: $('#mShowHome').checked };
+    const bookmarkData = { 
+        title, 
+        url, 
+        icon: $('#mIcon').value.trim() || undefined, 
+        showHome: !!$('#mShowHome').checked  // Ensure boolean
+    };
 
     if (editingState.bookmarkId) { // Editing
         const { bookmark } = findBookmark(editingState.bookmarkId);
-        Object.assign(bookmark, bookmarkData);
+        if (bookmark) {
+            Object.assign(bookmark, bookmarkData);
+        }
     } else { // Adding
         const category = BOOKMARKS.find(c => c.id === currentView);
-        category.items.push({ id: 'b_' + Date.now(), ...bookmarkData });
+        if (category) {
+            category.items.push({ id: 'b_' + Date.now(), ...bookmarkData });
+        }
     }
     
     $('#modal').classList.remove('active');
-    handleDataChange();
+    editingState = { bookmarkId: null, categoryId: null };  // Reset state
+    await handleDataChange();
 };
 
 $('#saveCategory').onclick = () => {
@@ -371,7 +391,9 @@ $('#contentArea').addEventListener('click', e => {
     } else if (e.target.closest('.delete-btn')) {
         if (!confirm("Are you sure?")) return;
         const { category } = findBookmark(card.dataset.id);
-        category.items = category.items.filter(i => i.id !== card.dataset.id);
+        if (category) {
+            category.items = category.items.filter(i => i.id !== card.dataset.id);
+        }
         handleDataChange();
     }
 });
