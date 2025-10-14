@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v1.3</title>
+<title>My Bookmarks v1.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:#f6faff; --card:#fff; --muted:#667085; --accent:#00a3ff; font-family:'Inter',sans-serif; }
@@ -67,7 +67,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v1.3</div>
+    <div id="versionInfo">v1.4</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -230,7 +230,13 @@ onAuthStateChanged(auth, async user => {
 // --- DATA PERSISTENCE ---
 async function saveBookmarks() {
     if (!currentUser) return;
-    await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: BOOKMARKS });
+    try {
+        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: BOOKMARKS });
+        console.log('Data saved successfully');
+    } catch (error) {
+        console.error('Error saving data: ', error);
+        alert('Failed to save data: ' + error.message);
+    }
 }
 
 // --- UI RENDERING FUNCTIONS ---
@@ -433,6 +439,8 @@ $('#saveModal').onclick = async () => {
         newCat.items = newCat.items || [];
         newCat.items.push({ id: 'b_' + Date.now(), ...bookmarkData });
     }
+
+    currentView = newCatId;
     
     $('#modal').classList.remove('active');
     editingState = { bookmarkId: null, categoryId: null };
