@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fütüristik Yer İmleri</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6faff;
+  --card:#fff;
+  --muted:#667085;
+  --accent:#00a3ff;
+  font-family:'Inter',sans-serif;
+}
+html,body{margin:0;height:100%;background:var(--bg);color:#0b1220;}
+.app{display:grid;grid-template-columns:280px 1fr;height:100vh;}
+.sidebar{
+  background:linear-gradient(180deg,#ffffff,rgba(255,255,255,0.9));
+  border-right:1px solid rgba(0,0,0,0.05);
+  padding:20px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.logo{
+  width:48px;height:48px;border-radius:10px;
+  background:conic-gradient(from 180deg,#00a3ff,#00ffd0,#f0ff00,#ff7c7c,#00a3ff);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#022;
+}
+h1{font-size:17px;margin:0;}
+.categories{flex:1;overflow:auto;padding-top:6px;}
+.category{
+  display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;
+  cursor:pointer;user-select:none;transition:background .2s;
+}
+.category:hover{background:rgba(0,163,255,0.08);}
+.category.active{background:rgba(0,163,255,0.12);}
+.cat-icon{width:36px;height:36px;border-radius:8px;
+  background:linear-gradient(180deg,#fff,#f3faff);
+  display:flex;align-items:center;justify-content:center;font-weight:700;}
+.cat-name{font-weight:600;}
+.main{
+  display:flex;flex-direction:column;height:100%;overflow:hidden;
+  background:linear-gradient(180deg,#ffffff,#f9fcff);
+  padding:24px;
+}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.header-title{font-size:20px;font-weight:800;}
+.view-toggle{display:flex;gap:6px;}
+.view-btn{padding:6px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.05);background:#f4f7fa;cursor:pointer;}
+.view-btn.active{background:#00a3ff;color:#fff;}
+.bookmark-list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;}
+.card{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  padding:10px;border-radius:12px;border:1px solid rgba(0,0,0,0.05);
+  cursor:grab;transition:transform .1s;
+}
+.card:active{transform:scale(0.98);}
+.card .fav{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.card .meta{flex:1;}
+.card .meta .title{font-weight:700;}
+.card .meta .url{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card .actions{display:flex;gap:6px;}
+.icon-btn{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;
+  border:1px solid rgba(0,0,0,0.05);cursor:pointer;}
+/* Grid mode */
+.grid-mode .bookmark-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;}
+.grid-mode .card{flex-direction:column;align-items:center;text-align:center;padding:16px;}
+.grid-mode .card .fav{width:64px;height:64px;border-radius:14px;}
+/* Home */
+.home-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:24px;
+}
+.home-tile{
+  background:var(--card);border-radius:20px;padding:20px;text-align:center;
+  box-shadow:0 8px 18px rgba(0,0,0,0.04);
+  transition:transform .2s;cursor:pointer;
+}
+.home-tile:hover{transform:translateY(-3px);}
+.home-tile img{width:64px;height:64px;border-radius:14px;margin-bottom:10px;}
+.home-tile .title{font-weight:600;font-size:15px;}
+/* Modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,15,28,0.35);z-index:100;}
+.modal.active{display:flex;}
+.modal-card{
+  width:500px;background:var(--card);padding:20px;border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+label{font-size:13px;color:var(--muted);display:block;margin-top:10px;}
+input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);}
+textarea{width:100%;min-height:70px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;}
+.btn{padding:8px 12px;border-radius:10px;background:#f4f7fa;border:1px solid rgba(0,0,0,0.05);cursor:pointer;}
+.switch{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.user-info{font-size:13px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">Y</div>
+      <div><h1>Yer İmleri</h1><div style="font-size:12px;color:var(--muted)">Ultra fütüristik</div></div>
+    </div>
+    <div class="user-info" id="userInfo"></div>
+    <button class="btn" id="loginBtn">Google ile Giriş Yap</button>
+    <button class="btn" id="logoutBtn" style="display:none;">Çıkış Yap</button>
+    <button class="btn" id="homeBtn">🏠 Anasayfa</button>
+    <button class="btn" id="addCategoryBtn">+ Kategori</button>
+    <button class="btn" id="addBookmarkBtn" style="display:none;">+ Yer İmi</button>
+    <div class="categories" id="categories"></div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="header">
+      <div class="header-title" id="pageTitle">Anasayfa</div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="listView">Liste</button>
+        <button class="view-btn" id="gridView">Kart</button>
+      </div>
+    </div>
+    <div id="contentArea"></div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <h3 id="modalTitle">Yer İmini Düzenle</h3>
+    <label>Başlık</label><input id="mTitle" type="text">
+    <label>URL</label><input id="mUrl" type="text">
+    <label>İkon (URL)</label><input id="mIcon" type="text">
+    <label>Açıklama</label><textarea id="mDesc"></textarea>
+    <div class="switch"><input type="checkbox" id="mShowHome"><label for="mShowHome">Anasayfada Göster</label></div>
+    <div class="modal-actions">
+      <button class="btn" id="cancelModal">İptal</button>
+      <button class="btn" id="saveModal">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI",
+  authDomain: "my-g-bookmarks.firebaseapp.com",
+  projectId: "my-g-bookmarks",
+  storageBucket: "my-g-bookmarks.firebasestorage.app",
+  messagingSenderId: "702837130313",
+  appId: "1:702837130313:web:bb7e64d33a772ed3d1eb98",
+  measurementId: "G-WZVPMS2XY4"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth();
+
+let BOOKMARKS = [];
+let currentUser = null;
+let currentCategoryId = null;
+let viewMode = "list";
+
+// ---- Elements ----
+const categoriesEl = document.getElementById('categories');
+const contentArea = document.getElementById('contentArea');
+const pageTitle = document.getElementById('pageTitle');
+const main = document.getElementById('main');
+const userInfo = document.getElementById('userInfo');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
+const addBookmarkBtn = document.getElementById('addBookmarkBtn');
+
+// ---- MODAL ----
+const modal = document.getElementById('modal');
+const mTitle = document.getElementById('mTitle');
+const mUrl = document.getElementById('mUrl');
+const mIcon = document.getElementById('mIcon');
+const mDesc = document.getElementById('mDesc');
+const mShowHome = document.getElementById('mShowHome');
+let editingId = null;
+let editingMode = null; // "edit" veya "add"
+
+// ---- AUTH ----
+loginBtn.onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    alert("Giriş sırasında hata: "+e.message);
+  }
+};
+logoutBtn.onclick = async () => {
+  await signOut(auth);
+};
+
+// Dinleme
+onAuthStateChanged(auth, async user=>{
+  currentUser = user;
+  if(user){
+    userInfo.textContent = user.displayName || user.email;
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'block';
+    addCategoryBtn.style.display = 'block';
+    addBookmarkBtn.style.display = 'block';
+    await loadBookmarks();
+  }else{
+    userInfo.textContent = '';
+    loginBtn.style.display = 'block';
+    logoutBtn.style.display = 'none';
+    addCategoryBtn.style.display = 'none';
+    addBookmarkBtn.style.display = 'none';
+    contentArea.innerHTML="<div style='color:var(--muted)'>Lütfen giriş yapın.</div>";
+  }
+});
+
+// ---- LOAD ----
+async function loadBookmarks(){
+  if(!currentUser) return;
+  const docRef = doc(db,"bookmarks",currentUser.uid);
+  const snap = await getDoc(docRef);
+  if(snap.exists()){
+    BOOKMARKS = snap.data().categories || [];
+  }else{
+    BOOKMARKS = [];
+  }
+  renderCategories();
+  renderHome();
+}
+
+// ---- SAVE ----
+async function saveBookmarks(){
+  if(!currentUser) return;
+  await setDoc(doc(db,"bookmarks",currentUser.uid), {categories:BOOKMARKS});
+}
+
+// ---- RENDER ----
+function renderCategories(){
+  categoriesEl.innerHTML='';
+  BOOKMARKS.forEach(cat=>{
+    const el=document.createElement('div');
+    el.className='category'+(cat.id===currentCategoryId?' active':'');
+    el.innerHTML=`<div class="cat-icon">${cat.title.charAt(0)}</div><div class="cat-name">${cat.title}</div>`;
+    el.onclick=()=>{currentCategoryId=cat.id;renderCategory(cat.id);}
+    categoriesEl.appendChild(el);
+  });
+}
+function renderHome(){
+  currentCategoryId=null;
+  pageTitle.textContent="Anasayfa";
+  contentArea.classList.remove("grid-mode");
+  const homeItems=BOOKMARKS.flatMap(c=>c.items.filter(i=>i.showHome));
+  if(homeItems.length===0){contentArea.innerHTML="<div style='color:var(--muted)'>Anasayfada gösterilecek yer imi yok.</div>";return;}
+  const grid=document.createElement('div');grid.className='home-grid';
+  homeItems.forEach(i=>{
+    const tile=document.createElement('div');tile.className='home-tile';
+    tile.onclick=()=>window.open(i.url,'_blank');
+    const img=i.icon?`<img src="${i.icon}">`:`<img src="https://www.google.com/s2/favicons?domain=${new URL(i.url).hostname}&sz=64">`;
+    tile.innerHTML=`${img}<div class='title'>${i.title}</div>`;
+    grid.appendChild(tile);
+  });
+  contentArea.innerHTML='';contentArea.appendChild(grid);
+}
+function renderCategory(catId){
+  const cat=BOOKMARKS.find(c=>c.id===catId);
+  pageTitle.textContent=cat.title;
+  contentArea.classList.toggle("grid-mode", viewMode==="grid");
+  const list=document.createElement('div');list.className='bookmark-list';
+  cat.items.forEach(i=>{
+    const card=document.createElement('div');card.className='card';card.draggable=true;
+    card.ondragstart=e=>{e.dataTransfer.setData('text/bookmark',i.id);}
+    card.innerHTML=`
+      <div class="fav" style="background:${cat.color};">${i.title.charAt(0)}</div>
+      <div class="meta">
+        <div class="title">${i.title}</div>
+        <div class="url">${i.url}</div>
+      </div>
+      <div class="actions">
+        <div class="icon-btn" onclick="editBookmark('${i.id}')">✏️</div>
+        <div class="icon-btn" onclick="deleteBookmark('${i.id}')">🗑️</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+  contentArea.innerHTML='';contentArea.appendChild(list);
+  renderCategories();
+}
+
+// ---- ADD CATEGORY ----
+addCategoryBtn.onclick = async ()=>{
+  const title = prompt("Kategori adı:");
+  if(!title) return;
+  BOOKMARKS.push({id:'cat_'+Date.now(), title, color:'#00a3ff', items:[]});
+  await saveBookmarks(); renderCategories();
+}
+
+// ---- ADD BOOKMARK ----
+addBookmarkBtn.onclick = ()=>{
+  if(!currentCategoryId){
+    alert("Önce bir kategori seçin!");
+    return;
+  }
+  editingId = null;
+  editingMode = "add";
+  mTitle.value=''; mUrl.value=''; mIcon.value=''; mDesc.value=''; mShowHome.checked=false;
+  modal.querySelector('#modalTitle').textContent="Yeni Yer İmi Ekle";
+  modal.classList.add('active');
+}
+
+// ---- EDIT ----
+window.editBookmark = (id)=>{
+  editingId = id;
+  editingMode="edit";
+  const cat = BOOKMARKS.find(c=>c.items.find(i=>i.id===id));
+  const item = cat.items.find(i=>i.id===id);
+  mTitle.value=item.title; mUrl.value=item.url; mIcon.value=item.icon||''; mDesc.value=item.desc||''; mShowHome.checked=item.showHome||false;
+  modal.querySelector('#modalTitle').textContent="Yer İmini Düzenle";
+  modal.classList.add('active');
+}
+document.getElementById('saveModal').onclick = async ()=>{
+  if(!currentCategoryId) return;
+  let cat = BOOKMARKS.find(c=>c.id===currentCategoryId);
+  if(editingMode==="add"){
+    const newItem = {id:'b_'+Date.now(), title:mTitle.value, url:mUrl.value, icon:mIcon.value, desc:mDesc.value, showHome:mShowHome.checked};
+    cat.items.push(newItem);
+  } else if(editingMode==="edit"){
+    const item = cat.items.find(i=>i.id===editingId);
+    item.title = mTitle.value; item.url=mUrl.value; item.icon=mIcon.value; item.desc=mDesc.value; item.showHome=mShowHome.checked;
+  }
+  modal.classList.remove('active');
+  await saveBookmarks();
+  renderCategory(cat.id);
+}
+
+// ---- DELETE ----
+window.deleteBookmark = async (id)=>{
+  const cat = BOOKMARKS.find(c=>c.items.find(i=>i.id===id));
+  cat.items = cat.items.filter(i=>i.id!==id);
+  await saveBookmarks();
+  renderCategory(cat.id);
+}
+
+// ---- VIEW TOGGLE ----
+document.getElementById('listView').onclick=()=>{viewMode='list'; renderCategory(currentCategoryId); toggleViewBtns();}
+document.getElementById('gridView').onclick=()=>{viewMode='grid'; renderCategory(currentCategoryId); toggleViewBtns();}
+function toggleViewBtns(){
+  document.getElementById('listView').classList.toggle('active',viewMode==='list');
+  document.getElementById('gridView').classList.toggle('active',viewMode==='grid');
+}
+
+// ---- HOME ----
+document.getElementById('homeBtn').onclick=renderHome;
+
+// ---- MODAL CANCEL ----
+document.getElementById('cancelModal').onclick=()=>modal.classList.remove('active');
+document.addEventListener('keydown',e=>{if(e.key==='Escape') modal.classList.remove('active');});
+
+</script>
+</body>
+</html>
