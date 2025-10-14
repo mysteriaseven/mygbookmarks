@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v1.1</title>
+<title>My Bookmarks v1.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:#f6faff; --card:#fff; --muted:#667085; --accent:#00a3ff; font-family:'Inter',sans-serif; }
@@ -64,7 +64,7 @@ input[type=text], textarea{width:100%;padding:10px;border-radius:8px;border:1px 
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v1.1</div>
+    <div id="versionInfo">v1.2</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -172,16 +172,14 @@ onAuthStateChanged(auth, async user => {
         
         const snap = await getDoc(doc(db, "bookmarks", currentUser.uid));
         BOOKMARKS = snap.exists() ? snap.data().categories || [] : [];
-        // Ensure showHome is explicitly set for all items to avoid undefined issues
-        BOOKMARKS.forEach(cat => {
-            if (cat.items) {
-                cat.items.forEach(item => {
-                    if (item.showHome === undefined) {
-                        item.showHome = false;
-                    }
-                });
-            }
-        });
+        // Ensure items is array and showHome is explicitly set for all items to avoid undefined issues
+        BOOKMARKS = BOOKMARKS.map(cat => ({
+            ...cat,
+            items: (cat.items || []).map(item => ({
+                ...item,
+                showHome: item.showHome !== undefined ? !!item.showHome : false
+            }))
+        }));
         currentView = 'home';
         renderApp();
     } else {
@@ -218,7 +216,7 @@ function renderCategories() {
 
 function renderHome() {
     $('#pageTitle').textContent = 'Home';
-    const homeItems = BOOKMARKS.flatMap(c => c.items.filter(i => i.showHome));
+    const homeItems = BOOKMARKS.flatMap(c => (c.items || []).filter(i => i.showHome));
     const contentArea = $('#contentArea');
     contentArea.innerHTML = '';
 
@@ -229,12 +227,19 @@ function renderHome() {
     const grid = document.createElement('div');
     grid.className = 'home-grid';
     homeItems.forEach(item => {
+        let hostname = '';
+        try {
+            hostname = new URL(item.url).hostname;
+        } catch (e) {
+            // Invalid URL, skip favicon
+        }
+        const iconSrc = item.icon || (hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=64` : '');
+        const fallbackSrc = hostname ? `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64` : '';
         const tile = document.createElement('a');
         tile.className = 'home-tile';
         tile.href = item.url;
         tile.target = '_blank';
-        const iconSrc = item.icon || `https://www.google.com/s2/favicons?domain=${new URL(item.url).hostname}&sz=64`;
-        tile.innerHTML = `<img src="${iconSrc}" alt="" onerror="this.src='https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${new URL(item.url).hostname}&size=64'"><div class='title'>${item.title}</div>`;
+        tile.innerHTML = `<img src="${iconSrc}" alt="" onerror="this.src='${fallbackSrc}'"><div class='title'>${item.title}</div>`;
         grid.appendChild(tile);
     });
     contentArea.appendChild(grid);
@@ -250,7 +255,7 @@ function renderCategory(catId) {
 
     const list = document.createElement('div');
     list.className = 'bookmark-list';
-    if (cat.items.length > 0) {
+    if ((cat.items || []).length > 0) {
         cat.items.forEach(item => {
             const iconHtml = item.icon ? `<img src="${item.icon}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;" onerror="this.parentElement.innerHTML = '${item.title.charAt(0).toUpperCase()}'">` : item.title.charAt(0).toUpperCase();
             list.innerHTML += `
@@ -281,7 +286,7 @@ function renderCategory(catId) {
 // --- MODAL & DATA MANIPULATION ---
 function findBookmark(bookmarkId) {
     for (const category of BOOKMARKS) {
-        const bookmark = category.items.find(item => item.id === bookmarkId);
+        const bookmark = (category.items || []).find(item => item.id === bookmarkId);
         if (bookmark) return { bookmark, category };
     }
     return { bookmark: null, category: null };
@@ -310,8 +315,13 @@ function openModalForAdd() {
 
 $('#saveModal').onclick = async () => {
     const title = $('#mTitle').value.trim();
-    const url = $('#mUrl').value.trim();
+    let url = $('#mUrl').value.trim();
     if (!title || !url) return alert("Title and URL are required.");
+
+    // Ensure full URL with protocol
+    if (!url.match(/^https?:\/\//i)) {
+        url = 'https://' + url;
+    }
 
     const bookmarkData = { 
         title, 
@@ -328,6 +338,7 @@ $('#saveModal').onclick = async () => {
     } else { // Adding
         const category = BOOKMARKS.find(c => c.id === currentView);
         if (category) {
+            category.items = category.items || [];
             category.items.push({ id: 'b_' + Date.now(), ...bookmarkData });
         }
     }
@@ -368,7 +379,10 @@ $('#categories').addEventListener('click', e => {
             otherCat = { id: 'cat_other', title: 'Diğer', color: '#808080', items: [] };
             BOOKMARKS.push(otherCat);
         }
-        if (catToDelete.items.length > 0) otherCat.items.push(...catToDelete.items);
+        if ((catToDelete.items || []).length > 0) {
+            otherCat.items = otherCat.items || [];
+            otherCat.items.push(...catToDelete.items);
+        }
         
         BOOKMARKS = BOOKMARKS.filter(c => c.id !== catId);
         if (currentView === catId) currentView = 'home';
@@ -392,7 +406,7 @@ $('#contentArea').addEventListener('click', e => {
         if (!confirm("Are you sure?")) return;
         const { category } = findBookmark(card.dataset.id);
         if (category) {
-            category.items = category.items.filter(i => i.id !== card.dataset.id);
+            category.items = (category.items || []).filter(i => i.id !== card.dataset.id);
         }
         handleDataChange();
     }
