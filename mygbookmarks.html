@@ -123,7 +123,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
       <button class="btn" id="cancelCategory">Cancel</button>
       <button class="btn" id="saveCategory">Save</button>
     </div>
-  </div>
+    </div>
 </div>
 
 <div class="modal" id="modalCategoryEdit">
@@ -354,7 +354,7 @@ function renderCategory(catId) {
         const list = document.createElement('div');
         list.className = 'bookmark-list';
         items.forEach(item => {
-            // İCON TESPİT MANTIĞI BURAYA EKLENDİ/GÜNCELLENDİ
+            // İKON DÜZELTMESİ BAŞLANGIÇ
             let hostname = '';
             try {
                 hostname = new URL(item.url).hostname;
@@ -364,12 +364,12 @@ function renderCategory(catId) {
             const iconSrc = item.icon || (hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=64` : '');
             const fallbackSrc = hostname ? `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64` : '';
             
-            // Icon HTML'i, otomatik tespit ve baş harf yedeğini içerecek şekilde güncellendi.
+            // Icon HTML yapısı, otomatik tespit ve baş harf yedeğini içerecek şekilde güncellendi.
             const iconHtml = iconSrc ? 
                 `<img src="${iconSrc}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;" onerror="if(this.src !== '${fallbackSrc}') this.src='${fallbackSrc}'; else this.parentElement.innerHTML = '${item.title.charAt(0).toUpperCase()}'">` 
-                : item.title.charAt(0).toUpperCase(); // Ne icon ne de hostname varsa baş harfi göster
-            // İCON TESPİT MANTIĞI BURAYA KADAR EKLENDİ/GÜNCELLENDİ
-
+                : item.title.charAt(0).toUpperCase(); 
+            // İKON DÜZELTMESİ SONUÇ
+            
             list.innerHTML += `
             <div class="card" data-id="${item.id}" data-category-id="${cat.id}">
                 <a href="${item.url}" target="_blank" class="fav" style="background:${cat.color||'#00a3ff'}; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center;">${iconHtml}</a>
@@ -452,14 +452,12 @@ $('#saveModal').onclick = async () => {
     if (!url.match(/^https?:\/\//i)) {
         url = 'https://' + url;
     }
-
+    
     const iconValue = $('#mIcon').value.trim();
-    
+
     const bookmarkData = { 
         title, 
         url, 
-        // Icon alanı boşsa veriden çıkarılmaz, boş dize olarak kalır.
-        // undefined hatasını engellemek için, saveBookmarks fonksiyonundaki temizleyici kullanılır.
         icon: iconValue || undefined, 
         showHome: !!$('#mShowHome').checked
     };
