@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v1.7</title>
+<title>My Bookmarks v1.8</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:#f6faff; --card:#fff; --muted:#667085; --accent:#00a3ff; font-family:'Inter',sans-serif; }
@@ -69,7 +69,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v1.7</div>
+    <div id="versionInfo">v1.8</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -211,7 +211,42 @@ onAuthStateChanged(auth, async user => {
     }
 });
 
-async function saveBookmarks() { if (!currentUser) return; await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: BOOKMARKS });}
+// --- DATA PERSISTENCE ---
+async function saveBookmarks() {
+    if (!currentUser) return;
+
+    // Kaydetmeden önce veriyi temizle
+    const cleanedBookmarks = BOOKMARKS.map(cat => {
+        const cleanedCat = { ...cat };
+        // Kategori öğelerini temizle
+        cleanedCat.items = (cat.items || []).map(item => {
+            const cleanedItem = {};
+            for (const key in item) {
+                // undefined olmayan tüm alanları kopyala
+                if (item[key] !== undefined) {
+                    cleanedItem[key] = item[key];
+                }
+            }
+            return cleanedItem;
+        });
+
+        // Kategori alanlarını temizle (e.g. order)
+        for (const key in cleanedCat) {
+            if (cleanedCat[key] === undefined) {
+                delete cleanedCat[key];
+            }
+        }
+        return cleanedCat;
+    });
+        
+    try {
+        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks }); // Temizlenmiş veriyi kaydet
+        console.log('Data saved successfully');
+    } catch (error) {
+        console.error('Error saving data: ', error);
+        alert('Failed to save data: ' + error.message);
+    }
+}
 
 // --- UI RENDERING & HELPERS ---
 function createFaviconHTML(item, defaultChar) {
@@ -466,3 +501,4 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') [$('#modal')
 </script>
 </body>
 </html>
+
