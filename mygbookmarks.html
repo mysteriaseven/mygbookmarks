@@ -705,27 +705,21 @@ function renderCategory(catId) {
         contentArea.appendChild(grid);
 
     } else {
+
         const list = document.createElement('div');
+
         list.className = 'bookmark-list';
+
         items.forEach(item => {
-            // Favicon alma mantığını buraya taşıyoruz
-            let hostname = '';
-            try {
-                hostname = new URL(item.url).hostname;
-            } catch (e) {
-                // Invalid URL
-            }
-            const iconSrc = item.icon || (hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=64` : '');
-            const fallbackSrc = hostname ? `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64` : '';
-            
-            // İcon için HTML yapısını, favicon kaynaklarını kullanarak güncelliyoruz.
-            const iconHtml = iconSrc ? 
-                `<img src="${iconSrc}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;" onerror="if(this.src !== '${fallbackSrc}') this.src='${fallbackSrc}'; else this.parentElement.innerHTML = '${item.title.charAt(0).toUpperCase()}'">` 
-                : item.title.charAt(0).toUpperCase(); // Ne icon ne de hostname varsa baş harfi göster
+
+            const iconHtml = item.icon ? `<img src="${item.icon}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover;" onerror="this.parentElement.innerHTML = '${item.title.charAt(0).toUpperCase()}'">` : item.title.charAt(0).toUpperCase();
 
             list.innerHTML += `
+
             <div class="card" data-id="${item.id}" data-category-id="${cat.id}">
+
                 <a href="${item.url}" target="_blank" class="fav" style="background:${cat.color||'#00a3ff'}; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center;">${iconHtml}</a>
+
                 <div class="meta">
 
                     <a href="${item.url}" target="_blank" style="text-decoration:none; color:inherit;"><div class="title">${item.title}</div></a>
