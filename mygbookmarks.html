@@ -371,6 +371,82 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     padding: 10px;
     color: #e74c3c;
 }
+
+/* Radio Widget Styles */
+#radioWidget {
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#radioScreen {
+  background: #000;
+  color: #00ff00;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+}
+
+.radio-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.radio-btn {
+  background: rgba(255,255,255,0.2);
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.radio-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.volume-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.volume-btn {
+  background: rgba(255,255,255,0.2);
+  color: #ffffff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.volume-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+#playPauseBtn {
+  background: rgba(0,255,0,0.3);
+  font-size: 1.3rem;
+}
+
+#playPauseBtn:hover {
+  background: rgba(0,255,0,0.4);
+}
 </style>
 </head>
 <body>
@@ -395,6 +471,21 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     </button>
     <button class="btn" id="addCategoryBtn" style="display:none;">+ Add Category</button>
     <div class="categories" id="categories"></div>
+
+    <!-- Radio Widget -->
+    <div id="radioWidget">
+      <div id="radioScreen">Radyo - İstasyon Seçin</div>
+      <div class="radio-controls">
+        <button class="radio-btn" id="prevStationBtn">◀</button>
+        <button class="radio-btn" id="playPauseBtn">▶</button>
+        <button class="radio-btn" id="nextStationBtn">▶</button>
+      </div>
+      <div class="volume-controls">
+        <button class="volume-btn" id="volumeDownBtn">−</button>
+        <span id="volumeDisplay">50%</span>
+        <button class="volume-btn" id="volumeUpBtn">+</button>
+      </div>
+    </div>
   </aside>
 
   <main class="main" id="main">
@@ -582,7 +673,68 @@ function renderCategories() {
     });
 }
 
-// Weather Functions
+// --- RADIO WIDGET LOGIC ---
+const stations = [
+  { name: "Max FM", frequency: 95.8, url: "http://live.radyotvonline.com:8090/stream" },
+  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
+  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/;stream/1" },
+];
+
+let currentStationIndex = 0;
+let isPlaying = false;
+let volume = 50;
+const audio = new Audio();
+
+function updateRadioScreen() {
+  const station = stations[currentStationIndex];
+  $('#radioScreen').textContent = `${station.name} - ${station.frequency} MHz`;
+}
+
+function changeStation(direction) {
+  if (direction === "prev") {
+    currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
+  } else {
+    currentStationIndex = (currentStationIndex + 1) % stations.length;
+  }
+  audio.src = stations[currentStationIndex].url;
+  updateRadioScreen();
+  if (isPlaying) {
+    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
+  }
+}
+
+function togglePlayPause() {
+  isPlaying = !isPlaying;
+  const btn = $('#playPauseBtn');
+  btn.textContent = isPlaying ? '⏸' : '▶';
+  if (isPlaying) {
+    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
+  } else {
+    audio.pause();
+  }
+}
+
+function changeVolume(direction) {
+  if (direction === "up") {
+    volume = Math.min(volume + 10, 100);
+  } else {
+    volume = Math.max(volume - 10, 0);
+  }
+  audio.volume = volume / 100;
+  $('#volumeDisplay').textContent = `${volume}%`;
+}
+
+// Event Listeners for Radio
+$('#prevStationBtn').addEventListener('click', () => changeStation("prev"));
+$('#nextStationBtn').addEventListener('click', () => changeStation("next"));
+$('#playPauseBtn').addEventListener('click', togglePlayPause);
+$('#volumeDownBtn').addEventListener('click', () => changeVolume("down"));
+$('#volumeUpBtn').addEventListener('click', () => changeVolume("up"));
+
+// Initialize Radio
+updateRadioScreen();
+
+// --- WEATHER FUNCTIONS ---
 const API_KEY = 'cd6435a221fb4a71881124700252110';
 const BASE_URL = 'https://api.weatherapi.com/v1';
 
@@ -1073,6 +1225,9 @@ $('#contentArea').addEventListener('click', e => {
 // Close Modals
 [$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
 document.addEventListener('keydown', e => { if (e.key === 'Escape') [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit')].forEach(m => m.classList.remove('active')); });
+
+// Initialize app
+renderApp();
 </script>
 </body>
 </html>
