@@ -3,147 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hava Durumu Widget</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <title>Ankara Hava Durumu</title>
     <style>
-        body { background-color: transparent; font-family: 'Inter', sans-serif; }
-        .weather-card { 
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0,0,0,0.05); 
-            color: #0b1220; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .weather-loader { text-align: center; padding: 40px; color: #667085; }
-        #city-select, #district-select { color: white; background-color: rgba(0,0,0,0.2); }
-        #city-select option, #district-select option { color: #333; background: #fff; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .widget-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .widget-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weather-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
+            animation: rain-fall linear infinite;
+        }
+
+        @keyframes rain-fall {
+            to { transform: translateY(200px); }
+        }
+
+        .snow-flake {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: snow-fall linear infinite;
+        }
+
+        @keyframes snow-fall {
+            to { transform: translateY(200px) rotate(360deg); }
+        }
+
+        .sun-rays {
+            position: absolute;
+            top: 50%;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            animation: rotate 20s linear infinite;
+            font-size: 60px;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .district-selector {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 20px;
+        }
+
+        .district-selector select {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .district-selector select option {
+            background: #667eea;
+            color: white;
+        }
+
+        .current-weather {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .current-temp {
+            font-size: 72px;
+            font-weight: bold;
+        }
+
+        .weather-icon-main {
+            font-size: 80px;
+        }
+
+        .weather-details {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-icon {
+            font-size: 24px;
+        }
+
+        .widget-body {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .hourly-forecast {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 30px;
+        }
+
+        .hourly-forecast::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .hourly-forecast::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .hourly-forecast::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .hour-card {
+            min-width: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .hour-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .hour-time {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .hour-icon {
+            font-size: 40px;
+            margin: 10px 0;
+        }
+
+        .hour-temp {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .hour-rain {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .daily-forecast {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .day-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .day-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .day-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .day-icon {
+            font-size: 50px;
+            margin: 15px 0;
+        }
+
+        .day-temps {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .temp-max {
+            font-weight: bold;
+        }
+
+        .temp-min {
+            opacity: 0.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+
+        .api-notice {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-
-    <div class="weather-card max-w-md w-full rounded-xl shadow-xl overflow-hidden transition-all duration-300">
-        <!-- Header -->
-        <div class="bg-blue-500 p-4 text-white">
-            <h1 class="text-xl font-bold">Hava Durumu</h1>
-            <div class="flex items-center mt-2">
-                <select id="city-select" class="rounded px-2 py-1 mr-2 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300 w-1/2">
-                    <!-- Sadece Ankara yüklenecek -->
-                </select>
-                <select id="district-select" class="rounded px-2 py-1 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300 w-1/2">
-                    <option value="">İlçe seçin</option>
+    <div class="widget-container">
+        <div class="widget-header" id="header">
+            <div class="weather-animation" id="weatherAnimation"></div>
+            
+            <div class="district-selector">
+                <select id="districtSelect">
+                    <option value="Etimesgut">Etimesgut</option>
+                    <option value="Çankaya">Çankaya</option>
+                    <option value="Keçiören">Keçiören</option>
+                    <option value="Mamak">Mamak</option>
+                    <option value="Yenimahalle">Yenimahalle</option>
+                    <option value="Altındağ">Altındağ</option>
+                    <option value="Sincan">Sincan</option>
+                    <option value="Pursaklar">Pursaklar</option>
+                    <option value="Gölbaşı">Gölbaşı</option>
+                    <option value="Polatlı">Polatlı</option>
+                    <option value="Ankara Merkez">Ankara Merkez</option>
                 </select>
             </div>
+
+            <div class="current-weather">
+                <div>
+                    <div class="current-temp" id="currentTemp">--°</div>
+                    <div id="weatherDesc" style="font-size: 18px; margin-top: 10px;">Yükleniyor...</div>
+                </div>
+                <div class="weather-icon-main" id="mainIcon">☁️</div>
+            </div>
+
+            <div class="weather-details" id="weatherDetails">
+                <div class="detail-item">
+                    <span class="detail-icon">💧</span>
+                    <span id="humidity">--%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">💨</span>
+                    <span id="wind">-- km/s</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">🌧️</span>
+                    <span id="rainChance">--%</span>
+                </div>
+            </div>
+
+            <div class="api-notice" id="apiNotice">
+                WeatherAPI.com kullanılıyor - Gerçek hava durumu verileri
+            </div>
         </div>
-        <!-- Hava Durumu İçeriği -->
-        <div id="weather-body">
-            <div class="weather-loader">Yükleniyor...</div>
+
+        <div class="widget-body">
+            <div class="section-title">📅 Saatlik Tahmin</div>
+            <div class="hourly-forecast" id="hourlyForecast">
+                <div class="loading">Hava durumu verileri yükleniyor...</div>
+            </div>
+
+            <div class="section-title">📆 3 Günlük Tahmin</div>
+            <div class="daily-forecast" id="dailyForecast">
+                <div class="loading">Günlük tahminler yükleniyor...</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // SADECE ANKARA VERİSİ BURAYA GÖMÜLDÜ
-        const provincesData = [
-            {"id":6,"name":"Ankara","latitude":"39.9208","longitude":"32.8541","population":5782285,"region":"İç Anadolu","districts":[{"id":69,"name":"Akyurt","latitude":"40.1294","longitude":"33.0878","population":40700},{"id":70,"name":"Altındağ","latitude":"39.94 Altındağ","longitude":"32.85","population":413994},{"id":71,"name":"Ayaş","latitude":"40.0167","longitude":"32.3333","population":12711},{"id":72,"name":"Bala","latitude":"39.4667","longitude":"33.1333","population":23287},{"id":73,"name":"Beypazarı","latitude":"40.1667","longitude":"31.9167","population":48469},{"id":74,"name":"Çamlıdere","latitude":"40.4833","longitude":"32.4833","population":8273},{"id":75,"name":"Çankaya","latitude":"39.9208","longitude":"32.8541","population":942553},{"id":76,"name":"Çubuk","latitude":"40.2333","longitude":"33.0167","population":91142},{"id":77,"name":"Elmadağ","latitude":"39.9167","longitude":"33.2","population":44354},{"id":78,"name":"Etimesgut","latitude":"39.95","longitude":"32.6833","population":614890},{"id":79,"name":"Evren","latitude":"39.0833","longitude":"33.7833","population":2763},{"id":80,"name":"Gölbaşı","latitude":"39.75","longitude":"32.8","population":150596},{"id":81,"name":"Güdül","latitude":"40.2167","longitude":"32.25","population":8019},{"id":82,"name":"Haymana","latitude":"39.45","longitude":"32.5","population":26323},{"id":83,"name":"Kahramankazan","latitude":"40.2167","longitude":"32.6833","population":59123},{"id":84,"name":"Kalecik","latitude":"40.0917","longitude":"33.3917","population":12439},{"id":85,"name":"Keçiören","latitude":"39.9667","longitude":"32.8667","population":942884},{"id":86,"name":"Kızılcahamam","latitude":"40.4667","longitude":"32.65","population":27484},{"id":87,"name":"Mamak","latitude":"39.9333","longitude":"32.9333","population":687527},{"id":88,"name":"Nallıhan","latitude":"40.15","longitude":"31.6","population":26778},{"id":89,"name":"Polatlı","latitude":"39.5833","longitude":"32.15","population":128378},{"id":90,"name":"Pursaklar","latitude":"40.0536","longitude":"32.9158","population":162483},{"id":91,"name":"Sincan","latitude":"39.9667","longitude":"32.5833","population":572609},{"id":92,"name":"Şereflikoçhisar","latitude":"39.05","longitude":"33.5333","population":33475},{"id":93,"name":"Yenimahalle","latitude":"39.95","longitude":"32.8","population":713171}]}
-        ];
-    </script>
+        // WeatherAPI.com API Key (ücretsiz - 1 milyon call/ay)
+        // Kendi API key'inizi https://www.weatherapi.com/signup.aspx adresinden alın
+        const API_KEY = 'cd6435a221fb4a71881124700252110'; // Demo key - değiştirin!
+        const BASE_URL = 'https://api.weatherapi.com/v1';
 
-    <script>
-        // ANA UYGULAMA MANTIĞI
-        const citySelect = document.getElementById('city-select');
-        const districtSelect = document.getElementById('district-select');
-        const weatherBody = document.getElementById('weather-body');
+        const districtSelect = document.getElementById('districtSelect');
+        const weatherAnimation = document.getElementById('weatherAnimation');
 
-        function getWeatherInfo(code, isDay = true) {
-            const info = { description: "Açık", icon: isDay ? "sun" : "moon" };
-            if ([0, 1].includes(code)) { info.description = "Açık"; info.icon = isDay ? "sun" : "moon"; }
-            else if ([2].includes(code)) { info.description = "Parçalı Bulutlu"; info.icon = "cloud"; }
-            else if ([3].includes(code)) { info.description = "Kapalı"; info.icon = "cloud"; }
-            else if ([45, 48].includes(code)) { info.description = "Sisli"; info.icon = "align-justify"; }
-            else if ([51, 53, 55, 56, 57].includes(code)) { info.description = "Çiseleme"; info.icon = "cloud-drizzle"; }
-            else if ([61, 63, 65, 66, 67].includes(code)) { info.description = "Yağmurlu"; info.icon = "cloud-rain"; }
-            else if ([71, 73, 75, 77, 85, 86].includes(code)) { info.description = "Karlı"; info.icon = "cloud-snow"; }
-            else if ([80, 81, 82].includes(code)) { info.description = "Sağanak Yağışlı"; info.icon = "cloud-lightning"; }
-            else if ([95, 96, 99].includes(code)) { info.description = "Fırtınalı"; info.icon = "wind"; }
-            return info;
+        // Weather icon mapping
+        function getWeatherIcon(code, isDay) {
+            const icons = {
+                1000: isDay ? '☀️' : '🌙', // Clear
+                1003: '⛅', // Partly cloudy
+                1006: '☁️', // Cloudy
+                1009: '☁️', // Overcast
+                1030: '🌫️', // Mist
+                1063: '🌦️', // Patchy rain possible
+                1066: '🌨️', // Patchy snow possible
+                1180: '🌧️', // Patchy light rain
+                1183: '🌧️', // Light rain
+                1186: '🌧️', // Moderate rain
+                1189: '🌧️', // Moderate rain
+                1192: '⛈️', // Heavy rain
+                1195: '⛈️', // Heavy rain
+                1210: '❄️', // Patchy light snow
+                1213: '❄️', // Light snow
+                1216: '❄️', // Patchy moderate snow
+                1219: '❄️', // Moderate snow
+                1222: '🌨️', // Patchy heavy snow
+                1225: '🌨️', // Heavy snow
+                1240: '🌦️', // Light rain shower
+                1243: '⛈️', // Moderate or heavy rain shower
+                1246: '⛈️', // Torrential rain shower
+                1273: '⛈️', // Patchy light rain with thunder
+                1276: '⛈️', // Moderate or heavy rain with thunder
+            };
+            return icons[code] || '☁️';
         }
 
-        function updateWeatherUI(data) {
-            const now = new Date();
-            const currentInfo = getWeatherInfo(data.current.weather_code, data.current.is_day);
-
-            weatherBody.innerHTML = `
-                <div class="p-4 border-b border-gray-200"><div class="flex justify-between items-center"><div><h2 class="text-2xl font-semibold">Şu An</h2><p class="text-gray-600">${now.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}</p></div><div class="text-right"><div class="flex items-center justify-end"><i data-feather="${currentInfo.icon}" class="w-12 h-12 text-yellow-500"></i><span class="text-3xl font-bold ml-2">${Math.round(data.current.temperature_2m)}°</span></div><p class="text-gray-600">${currentInfo.description}</p></div></div></div>
-                <div class="p-4 border-b border-gray-200"><h3 class="text-lg font-medium mb-3">Saatlik Tahmin</h3><div class="flex overflow-x-auto space-x-4 pb-2" id="hourly-forecast-items"></div></div>
-                <div class="p-4"><h3 class="text-lg font-medium mb-3">5 Günlük Tahmin</h3><div class="space-y-3" id="daily-forecast-items"></div></div>`;
-
-            const hourlyContainer = document.getElementById('hourly-forecast-items');
-            data.hourly.time.map((t, i) => ({ time: new Date(t), temp: data.hourly.temperature_2m[i], code: data.hourly.weather_code[i] })).filter(h => h.time >= now).slice(0, 6).forEach(h => {
-                const hourInfo = getWeatherInfo(h.code);
-                hourlyContainer.innerHTML += `<div class="text-center flex-shrink-0"><p class="text-sm font-medium">${h.time.getHours()}:00</p><i data-feather="${hourInfo.icon}" class="w-6 h-6 my-1 text-yellow-500 mx-auto"></i><p>${Math.round(h.temp)}°</p></div>`;
-            });
-
-            const dailyContainer = document.getElementById('daily-forecast-items');
-            data.daily.time.map((t, i) => ({ time: new Date(t), max: data.daily.temperature_2m_max[i], min: data.daily.temperature_2m_min[i], code: data.daily.weather_code[i] })).slice(1, 6).forEach(d => {
-                const dayInfo = getWeatherInfo(d.code);
-                dailyContainer.innerHTML += `<div class="flex items-center justify-between p-2 rounded-lg bg-gray-50"><p class="font-medium w-24">${d.time.toLocaleDateString('tr-TR', { weekday: 'long' })}</p><div class="flex items-center"><i data-feather="${dayInfo.icon}" class="w-5 h-5 mr-2 text-yellow-500"></i><span class="text-gray-600 mr-3 w-8 text-right">${Math.round(d.min)}°</span><span class="font-medium w-8 text-right">${Math.round(d.max)}°</span></div></div>`;
-            });
-            feather.replace();
+        function createWeatherAnimation(code) {
+            weatherAnimation.innerHTML = '';
+            
+            // Rain animation (codes 1063, 1180-1246)
+            if (code >= 1180 && code <= 1246) {
+                for (let i = 0; i < 50; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    drop.style.left = Math.random() * 100 + '%';
+                    drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                    drop.style.animationDelay = Math.random() * 2 + 's';
+                    weatherAnimation.appendChild(drop);
+                }
+            }
+            // Snow animation (codes 1210-1225)
+            else if (code >= 1210 && code <= 1225) {
+                for (let i = 0; i < 30; i++) {
+                    const flake = document.createElement('div');
+                    flake.className = 'snow-flake';
+                    flake.style.left = Math.random() * 100 + '%';
+                    flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    flake.style.animationDelay = Math.random() * 2 + 's';
+                    weatherAnimation.appendChild(flake);
+                }
+            }
+            // Sun animation (code 1000)
+            else if (code === 1000) {
+                const rays = document.createElement('div');
+                rays.className = 'sun-rays';
+                rays.innerHTML = '☀️';
+                weatherAnimation.appendChild(rays);
+            }
         }
-        
-        async function fetchWeather(lat, lon) {
-            weatherBody.innerHTML = '<div class="weather-loader">Hava durumu verisi alınıyor...</div>';
+
+        async function fetchWeatherData(district) {
             try {
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe/Istanbul`);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const location = `${district}, Ankara, Turkey`;
+                
+                // Fetch current weather and forecast
+                const response = await fetch(
+                    `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=yes&lang=tr`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Hava durumu verileri alınamadı');
+                }
+                
                 const data = await response.json();
-                updateWeatherUI(data);
+                return data;
             } catch (error) {
-                console.error("Hava durumu verisi alınırken hata oluştu:", error);
-                weatherBody.innerHTML = '<div class="weather-loader text-red-500">Bir hata oluştu. Lütfen internet bağlantınızı kontrol edin.</div>';
+                console.error('API Error:', error);
+                document.getElementById('apiNotice').textContent = 
+                    'Veri yüklenemedi. Lütfen API key\'inizi kontrol edin.';
+                document.getElementById('apiNotice').style.background = 'rgba(231, 76, 60, 0.3)';
+                return null;
             }
         }
 
-        citySelect.addEventListener('change', function() {
-            districtSelect.innerHTML = '<option value="">İlçe seçin</option>';
-            districtSelect.disabled = true;
-            if (this.value) {
-                const province = provincesData.find(p => p.name === this.value);
-                if (province && province.districts) {
-                    province.districts.forEach(d => { districtSelect.innerHTML += `<option value="${d.name}">${d.name}</option>`; });
-                    districtSelect.disabled = false;
-                }
-            }
-        });
+        function updateWeather(data) {
+            if (!data) return;
 
-        districtSelect.addEventListener('change', function() {
-            if (citySelect.value && this.value) {
-                const p = provincesData.find(p => p.name === citySelect.value);
-                const d = p ? p.districts.find(d => d.name === this.value) : null;
-                if (d) {
-                    fetchWeather(d.latitude, d.longitude);
-                }
-            }
-        });
-
-        function initializeWeatherWidget() {
-            try {
-                // İl listesini sadece Ankara ile doldur
-                const ankara = provincesData[0];
-                citySelect.innerHTML = `<option value="${ankara.name}">${ankara.name}</option>`;
-                
-                // Varsayılan olarak Ankara / Etimesgut seçili gelsin
-                citySelect.value = 'Ankara';
-                citySelect.dispatchEvent(new Event('change')); 
-                
-                districtSelect.value = 'Etimesgut';
-                districtSelect.dispatchEvent(new Event('change'));
-
-            } catch (error) {
-                console.error("Widget başlatılırken hata:", error);
-                weatherBody.innerHTML = '<div class="weather-loader text-red-500">Bilinmeyen bir hata oluştu.</div>';
-            }
+            const current = data.current;
+            const forecast = data.forecast.forecastday;
+            
+            // Update current weather
+            document.getElementById('currentTemp').textContent = Math.round(current.temp_c) + '°';
+            document.getElementById('weatherDesc').textContent = current.condition.text;
+            document.getElementById('mainIcon').textContent = getWeatherIcon(current.condition.code, current.is_day);
+            document.getElementById('humidity').textContent = 'Nem: ' + current.humidity + '%';
+            document.getElementById('wind').textContent = current.wind_kph.toFixed(1) + ' km/s';
+            document.getElementById('rainChance').textContent = 'Yağış: %' + (forecast[0].day.daily_chance_of_rain || 0);
+            
+            createWeatherAnimation(current.condition.code);
+            
+            // Update hourly forecast (next 24 hours)
+            const hourlyDiv = document.getElementById('hourlyForecast');
+            const allHours = [];
+            
+            // Get hours from all forecast days
+            forecast.forEach(day => {
+                allHours.push(...day.hour);
+            });
+            
+            // Get current hour index
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // Filter to show next 12 hours starting from current hour
+            const next12Hours = allHours.slice(currentHour, currentHour + 12);
+            
+            hourlyDiv.innerHTML = next12Hours.map(hour => {
+                const time = new Date(hour.time);
+                return `
+                    <div class="hour-card">
+                        <div class="hour-time">${time.getHours()}:00</div>
+                        <div class="hour-icon">${getWeatherIcon(hour.condition.code, hour.is_day)}</div>
+                        <div class="hour-temp">${Math.round(hour.temp_c)}°</div>
+                        <div class="hour-rain">💧 %${hour.chance_of_rain}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update daily forecast
+            const dailyDiv = document.getElementById('dailyForecast');
+            const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+            
+            dailyDiv.innerHTML = forecast.map((day, index) => {
+                const date = new Date(day.date);
+                const dayName = index === 0 ? 'Bugün' : days[date.getDay()];
+                return `
+                    <div class="day-card">
+                        <div class="day-name">${dayName}</div>
+                        <div class="day-icon">${getWeatherIcon(day.day.condition.code, 1)}</div>
+                        <div class="day-temps">
+                            <span class="temp-max">${Math.round(day.day.maxtemp_c)}°</span>
+                            <span class="temp-min">${Math.round(day.day.mintemp_c)}°</span>
+                        </div>
+                        <div class="hour-rain">💧 %${day.day.daily_chance_of_rain}</div>
+                    </div>
+                `;
+            }).join('');
         }
-        
-        initializeWeatherWidget();
+
+        districtSelect.addEventListener('change', async (e) => {
+            document.getElementById('hourlyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+            document.getElementById('dailyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+            
+            const data = await fetchWeatherData(e.target.value);
+            if (data) {
+                updateWeather(data);
+            }
+        });
+
+        // Initialize with Etimesgut
+        (async () => {
+            const data = await fetchWeatherData('Etimesgut');
+            if (data) {
+                updateWeather(data);
+            }
+        })();
     </script>
 </body>
 </html>
