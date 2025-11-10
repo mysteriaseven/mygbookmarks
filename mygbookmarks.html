@@ -6,446 +6,114 @@
 <title>My Bookmarks v1.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); --card:rgba(255, 255, 255, 0.95); --muted:#e0e6ff; --accent:#667eea; font-family:'Inter',sans-serif; }
-html,body{margin:0;height:100%;background:var(--bg);color:#ffffff;}
+:root {
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card: rgba(255, 255, 255, 0.95);
+  --card-hover: rgba(255, 255, 255, 1);
+  --muted: #e0e6ff;
+  --accent: #667eea;
+  --text: #333;
+  --radius: 20px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.15);
+  font-family: 'Inter', sans-serif;
+}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);}
 .app{display:grid;grid-template-columns:280px 1fr;height:100vh;}
-.sidebar{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-right:1px solid rgba(255,255,255,0.1); padding:20px; display:flex;flex-direction:column;gap:16px; color:#ffffff; }
-#versionInfo {
-    background: rgba(255, 255, 255, 0.2); color: #ffffff; padding: 3px 8px;
-    border-radius: 8px; font-size: 12px; font-weight: 600;
-    align-self: flex-start; /* Aligns item to the start of the flex container */
-    margin-bottom: 8px; /* Adds space below the version tag */
-}
+.sidebar{background:var(--bg);padding:20px;display:flex;flex-direction:column;gap:16px;color:#fff;}
+#versionInfo{background:rgba(255,255,255,0.2);color:#fff;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;align-self:flex-start;margin-bottom:8px;}
 .brand{display:flex;align-items:center;gap:12px;}
-.logo{ width:48px;height:48px;border-radius:50%; background:conic-gradient(from 180deg,#ffffff,#e0e6ff,#a8e6cf,#ffd93d,#ffffff); display:flex;align-items:center;justify-content:center; font-weight:800;color:#667eea;overflow:hidden; }
+.logo{width:48px;height:48px;border-radius:50%;background:conic-gradient(from 180deg,#fff,#e0e6ff,#a8e6cf,#ffd93d,#fff);display:flex;align-items:center;justify-content:center;font-weight:800;color:#667eea;overflow:hidden;}
 .logo img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
-h1{font-size:17px;margin:0;color:#ffffff;}
-#sidebarSubtitleContainer{ display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
-#miniSignOutBtn { background: rgba(255,255,255,0.1); color: #ffffff; border:none; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background .2s; }
-#miniSignOutBtn:hover { background: rgba(255,255,255,0.2); }
-.categories{flex:1;overflow:auto;padding-top:6px; display:flex; flex-direction:column; gap:4px;}
-.category{ display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px; cursor:pointer;user-select:none;transition: background .2s, opacity .2s, transform .2s; position:relative; box-shadow:0 5px 15px rgba(0,0,0,0.2); background:rgba(255,255,255,0.1); }
-.category.dragging{ opacity: 0.5; background: rgba(255,255,255,0.2); }
-.category:hover{background:rgba(255,255,255,0.2); transform:translateY(-2px);}
+h1{font-size:17px;margin:0;color:#fff;}
+#sidebarSubtitleContainer{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px;}
+#miniSignOutBtn{background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s;}
+#miniSignOutBtn:hover{background:rgba(255,255,255,0.2);}
+.categories{flex:1;overflow:auto;padding-top:6px;display:flex;flex-direction:column;gap:4px;}
+.category{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;cursor:pointer;user-select:none;transition:all .2s;position:relative;background:rgba(255,255,255,0.1);}
+.category:hover{background:rgba(255,255,255,0.2);transform:translateY(-1px);}
 .category.active{background:rgba(255,255,255,0.3);}
-.cat-icon{width:36px;height:36px;border-radius:8px; background:rgba(255,255,255,0.2); display:flex;align-items:center;justify-content:center;font-weight:700; flex-shrink: 0; color:#ffffff;}
-.cat-name{font-weight:600;flex:1;pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color:#ffffff;}
-.main{ display:flex;flex-direction:column;height:100%;overflow:hidden; background:var(--card); padding:24px; border-radius:20px 0 0 20px; margin:20px 0; box-shadow:0 20px 60px rgba(0, 0, 0, 0.3); color:#333; }
+.cat-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;color:#fff;}
+.cat-name{font-weight:600;flex:1;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;}
+.main{display:flex;flex-direction:column;height:100%;overflow:hidden;background:var(--card);padding:24px;border-radius:var(--radius) 0 0 var(--radius);margin:20px 0;box-shadow:var(--shadow);color:var(--text);}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.header-title{font-size:20px;font-weight:800; color:#333;}
-#viewControls { display: none; flex-direction: row; gap: 8px; }
-#viewControls button { padding: 6px 12px; font-size: 14px; border-radius:20px; }
-.view-btn.active { background: var(--accent); color: white; }
-.bookmark-list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;}
-.card{ display:flex;align-items:center;gap:12px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:15px;border-radius:20px;border:1px solid rgba(255,255,255,0.1); cursor:grab;transition:transform .1s, box-shadow .2s; box-shadow:0 5px 15px rgba(0,0,0,0.1); color:#ffffff; }
-.card .fav{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700; overflow:hidden; flex-shrink: 0; background:rgba(255,255,255,0.2);}
-.card .meta{flex:1;min-width:0;}
-.card .meta .title{font-weight:700; color:#ffffff;}
-.card .meta .url{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.card .actions{display:flex;gap:6px;}
-.icon-btn{width:32px;height:32px;border-radius:8px;display:grid;place-items:center; border:1px solid rgba(255,255,255,0.2);cursor:pointer; background: rgba(255,255,255,0.1); color:#ffffff; flex-shrink: 0;}
-.icon-btn:hover{background:rgba(255,255,255,0.2);}
-.delete-cat, .edit-cat{ display:none; }
-.category:hover .delete-cat, .category:hover .edit-cat{ display:grid; }
-#homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius:20px; background:rgba(255,255,255,0.1); color:#ffffff; }
-#homeBtn svg { width: 22px; height: 22px; }
-.content-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:18px; }
-.grid-tile{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:20px;padding:16px;text-align:center; box-shadow:0 6px 16px rgba(0,0,0,0.1); transition:transform .2s, box-shadow .2s;cursor:pointer; text-decoration: none; color: #ffffff;}
-.grid-tile:hover{transform:translateY(-3px); box-shadow:0 10px 25px rgba(102, 126, 234, 0.3);}
-.grid-tile img{width:48px;height:48px;border-radius:12px;margin-bottom:8px; object-fit:cover;}
-.grid-tile .title{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%; color:#ffffff;}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,15,28,0.35);z-index:100;}
+.header-title{font-size:20px;font-weight:800;color:var(--text);}
+.content-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;}
+.grid-tile{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:var(--radius);padding:18px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,0.1);transition:all .3s;cursor:pointer;text-decoration:none;color:#fff;position:relative;overflow:hidden;}
+.grid-tile::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity .3s;}
+.grid-tile:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(102,126,234,0.3);}
+.grid-tile:hover::before{opacity:1;}
+.grid-tile img{width:48px;height:48px;border-radius:12px;margin-bottom:10px;object-fit:cover;}
+.grid-tile .title{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;color:#fff;}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,15,28,0.5);z-index:100;backdrop-filter:blur(8px);}
 .modal.active{display:flex;}
-.modal-card{ width:400px;background:var(--card);padding:20px;border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.15); backdrop-filter:blur(10px); color:#333; }
-.form-group { margin-bottom: 12px; }
-label{font-size:13px;color:#666;display:block; margin-bottom: 4px;}
-input[type=text], input[type=number], textarea, select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);box-sizing:border-box;}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;}
-.btn{padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border:1px solid rgba(0,0,0,0.05);cursor:pointer; transition:background .2s; color:#ffffff;}
-.btn:hover{background:linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);}
-.switch{display:flex;align-items:center;gap:8px;margin-top:12px; user-select:none;}
+.modal-card{width:420px;background:var(--card);padding:24px;border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px);color:var(--text);}
+.form-group{margin-bottom:14px;}
+label{font-size:13px;color:#666;display:block;margin-bottom:6px;font-weight:600;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.1);box-sizing:border-box;font-size:14px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;}
+.btn{padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;cursor:pointer;transition:all .2s;color:#fff;font-weight:600;}
+.btn:hover{background:linear-gradient(135deg,#5a6fd8 0%,#6a4190 100%);}
+.switch{display:flex;align-items:center;gap:8px;margin-top:12px;user-select:none;font-size:14px;color:#555;}
+.switch input{margin-right:8px;}
 
-/* Weather Styles - Horizontal Layout */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Weather Widget - Modern */
+.widget-container{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:row;min-height:220px;}
+.widget-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:18px;color:#fff;position:relative;overflow:hidden;flex:1;min-width:220px;display:flex;flex-direction:column;justify-content:center;}
+.weather-animation{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;}
+.rain-drop{position:absolute;width:2px;height:20px;background:linear-gradient(transparent,rgba(255,255,255,0.7));animation:rain-fall linear infinite;}
+@keyframes rain-fall{to{transform:translateY(250px);}}
+.snow-flake{position:absolute;width:8px;height:8px;background:#fff;border-radius:50%;animation:snow-fall linear infinite;}
+@keyframes snow-fall{to{transform:translateY(250px) rotate(360deg);}}
+.sun-rays{position:absolute;top:50%;right:20px;width:60px;height:60px;font-size:42px;animation:rotate 18s linear infinite;}
+@keyframes rotate{to{transform:rotate(360deg);}}
+.district-selector select{width:100%;padding:8px 12px;border:none;border-radius:10px;background:rgba(255,255,255,0.2);color:#fff;font-size:13px;cursor:pointer;outline:none;}
+.current-weather{display:flex;justify-content:space-between;align-items:center;margin:12px 0;}
+.current-temp{font-size:38px;font-weight:800;}
+.weather-icon-main{font-size:44px;}
+.weather-desc{font-size:13px;text-align:center;margin-top:4px;}
+.weather-details{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.detail-item{display:flex;align-items:center;gap:5px;font-size:12px;}
+.detail-icon{font-size:15px;}
+.api-notice{background:rgba(255,255,255,0.2);padding:6px;border-radius:6px;font-size:9px;margin-top:8px;text-align:center;}
+.widget-body{padding:18px;flex:2;display:flex;flex-direction:column;overflow:hidden;}
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.hourly-forecast,.daily-forecast{display:flex;gap:10px;overflow-x:auto;padding:6px 0;}
+.hourly-forecast::-webkit-scrollbar,.daily-forecast::-webkit-scrollbar{height:5px;}
+.hourly-forecast::-webkit-scrollbar-thumb,.daily-forecast::-webkit-scrollbar-thumb{background:#667eea;border-radius:10px;}
+.hour-card,.day-card{flex-shrink:0;text-align:center;padding:10px;border-radius:12px;transition:transform .3s;}
+.hour-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.hour-card:hover{transform:translateY(-3px);}
+.hour-time{font-size:11px;opacity:0.9;}
+.hour-icon{font-size:22px;margin:4px 0;}
+.hour-temp{font-size:15px;font-weight:700;}
+.hour-rain{font-size:9px;opacity:0.8;}
+.day-card{background:rgba(102,126,234,0.08);border:1px solid transparent;padding:12px;border-radius:12px;}
+.day-card:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,0.2);}
+.day-name{font-weight:700;color:#667eea;font-size:12px;}
+.day-icon{font-size:26px;margin:6px 0;}
+.day-temps{display:flex;justify-content:center;gap:6px;font-size:13px;color:var(--text);}
+.temp-max{font-weight:700;}
+.temp-min{opacity:0.6;}
+.day-rain{font-size:9px;opacity:0.8;margin-top:4px;}
 
-.widget-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    max-width: 100%;
-    width: 100%;
-    overflow: visible;
-    backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: row;
-    height: auto;
-    min-height: 200px;
-}
+/* Radio Widget - Modern */
+#radioWidget{background:rgba(255,255,255,0.15);border-radius:16px;padding:16px;margin-top:12px;text-align:center;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);}
+#radioScreen{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-bottom:12px;font-family:'Courier New',monospace;font-size:14px;letter-spacing:0.5px;}
+.radio-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.radio-btn{background:rgba(255,255,255,0.2);color:#fff;border:none;padding:0;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.radio-btn:hover{background:rgba(255,255,255,0.3);transform:scale(1.05);}
+#playPauseBtn{background:rgba(0,255,0,0.4);font-size:22px;}
+#playPauseBtn.playing{background:rgba(255,100,100,0.5);}
+.volume-controls{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
+.volume-btn{background:rgba(255,255,255,0.2);color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .2s;}
+.volume-btn:hover{background:rgba(255,255,255,0.3);}
 
-.widget-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    border-radius: 20px 0 0 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 200px;
-}
-
-.weather-animation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.rain-drop {
-    position: absolute;
-    width: 2px;
-    height: 20px;
-    background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
-    animation: rain-fall linear infinite;
-}
-
-@keyframes rain-fall {
-    to { transform: translateY(200px); }
-}
-
-.snow-flake {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
-    animation: snow-fall linear infinite;
-}
-
-@keyframes snow-fall {
-    to { transform: translateY(200px) rotate(360deg); }
-}
-
-.sun-rays {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    animation: rotate 20s linear infinite;
-    font-size: 40px;
-}
-
-@keyframes rotate {
-    to { transform: rotate(360deg); }
-}
-
-.district-selector {
-    position: relative;
-    z-index: 10;
-    margin-bottom: 10px;
-}
-
-.district-selector select {
-    width: 100%;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 10px;
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    outline: none;
-}
-
-.district-selector select option {
-    background: #667eea;
-    color: white;
-}
-
-.current-weather {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.current-temp {
-    font-size: 36px;
-    font-weight: bold;
-}
-
-.weather-icon-main {
-    font-size: 40px;
-}
-
-.weather-desc {
-    font-size: 12px;
-    margin-top: 5px;
-    text-align: center;
-}
-
-.weather-details {
-    display: flex;
-    gap: 10px;
-    position: relative;
-    z-index: 10;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.detail-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-}
-
-.detail-icon {
-    font-size: 14px;
-}
-
-.api-notice {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 8px;
-    margin-top: 5px;
-    text-align: center;
-}
-
-.widget-body {
-    padding: 15px;
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 0 20px 20px 0;
-}
-
-.section-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.hourly-forecast {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 5px 0;
-    margin-bottom: 10px;
-    flex: 1;
-}
-
-.hourly-forecast::-webkit-scrollbar {
-    height: 4px;
-}
-
-.hourly-forecast::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.hourly-forecast::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 10px;
-}
-
-.hour-card {
-    min-width: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
-    padding: 8px;
-    text-align: center;
-    color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-    flex-shrink: 0;
-}
-
-.hour-card:hover {
-    transform: translateY(-2px);
-}
-
-.hour-time {
-    font-size: 10px;
-    margin-bottom: 2px;
-    opacity: 0.9;
-}
-
-.hour-icon {
-    font-size: 20px;
-    margin: 2px 0;
-}
-
-.hour-temp {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.hour-rain {
-    font-size: 8px;
-    margin-top: 2px;
-    opacity: 0.8;
-}
-
-.daily-forecast {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 5px 0;
-}
-
-.day-card {
-    min-width: 80px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    transition: all 0.3s;
-    border: 1px solid transparent;
-    flex-shrink: 0;
-}
-
-.day-card:hover {
-    border-color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-}
-
-.day-name {
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 5px;
-    font-size: 11px;
-}
-
-.day-icon {
-    font-size: 24px;
-    margin: 5px 0;
-}
-
-.day-temps {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    font-size: 12px;
-    color: #333;
-}
-
-.temp-max {
-    font-weight: bold;
-}
-
-.temp-min {
-    opacity: 0.6;
-}
-
-.day-rain {
-    font-size: 8px;
-    margin-top: 3px;
-    opacity: 0.8;
-}
-
-.loading {
-    text-align: center;
-    padding: 10px;
-    font-size: 12px;
-    color: #667eea;
-}
-
-.error {
-    text-align: center;
-    padding: 10px;
-    color: #e74c3c;
-}
-
-/* Radio Widget Styles */
-#radioWidget {
-  background: rgba(255,255,255,0.1);
-  border-radius: 15px;
-  padding: 15px;
-  margin-top: 10px;
-  text-align: center;
-}
-
-#radioScreen {
-  background: #000;
-  color: #00ff00;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  font-family: 'Courier New', monospace;
-}
-
-.radio-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.radio-btn {
-  background: rgba(255,255,255,0.2);
-  color: #ffffff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.1rem;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.radio-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-.volume-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-}
-
-.volume-btn {
-  background: rgba(255,255,255,0.2);
-  color: #ffffff;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.volume-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-#playPauseBtn {
-  background: rgba(0,255,0,0.3);
-  font-size: 1.3rem;
-}
-
-#playPauseBtn:hover {
-  background: rgba(0,255,0,0.4);
+/* Responsive */
+@media (max-width: 768px) {
+  .app{grid-template-columns:1fr;}
+  .sidebar{position:fixed;top:0;left:-280px;width:280px;height:100%;z-index:99;transition:left .3s;box-shadow:2px 0 20px rgba(0,0,0,0.2);}
+  .sidebar.open{left:0;}
+  .main{margin:0;border-radius:0;}
 }
 </style>
 </head>
@@ -457,24 +125,24 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
       <div class="logo" id="userLogo">Y</div>
       <div>
         <h1 id="sidebarTitle">My Bookmarks</h1>
-        <div id="sidebarSubtitleContainer" style="display: none;">
-            <span id="sidebarSubtitle"></span>
-            <button id="miniSignOutBtn">Sign Out</button>
+        <div id="sidebarSubtitleContainer" style="display:none;">
+          <span id="sidebarSubtitle"></span>
+          <button id="miniSignOutBtn">Çıkış</button>
         </div>
       </div>
     </div>
-    <button class="btn" id="loginBtn">Sign in with Google</button>
-    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.2); margin: 0;">
+    <button class="btn" id="loginBtn">Google ile Giriş</button>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,0.2);margin:12px 0;">
     <button class="btn" id="homeBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"></path></svg>
-        Home
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"></path></svg>
+      Ana Sayfa
     </button>
-    <button class="btn" id="addCategoryBtn" style="display:none;">+ Add Category</button>
+    <button class="btn" id="addCategoryBtn" style="display:none;">+ Kategori Ekle</button>
     <div class="categories" id="categories"></div>
 
     <!-- Radio Widget -->
     <div id="radioWidget">
-      <div id="radioScreen">Radyo - İstasyon Seçin</div>
+      <div id="radioScreen">Radyo - İstasyon Seç</div>
       <div class="radio-controls">
         <button class="radio-btn" id="prevStationBtn">◀</button>
         <button class="radio-btn" id="playPauseBtn">▶</button>
@@ -490,51 +158,47 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 
   <main class="main" id="main">
     <div class="header">
-      <div class="header-title" id="pageTitle">Home</div>
-      <div id="viewControls">
-        <button class="btn view-btn active" id="listViewBtn">List</button>
-        <button class="btn view-btn" id="cardViewBtn">Card</button>
-      </div>
+      <div class="header-title" id="pageTitle">Ana Sayfa</div>
     </div>
     <div id="contentArea"></div>
   </main>
 </div>
 
-<!-- MODALS -->
+<!-- Modals -->
 <div class="modal" id="modal">
   <div class="modal-card">
-    <h3 id="modalTitle">Add/Edit Bookmark</h3>
-    <div class="form-group"><label for="mTitle">Title</label><input id="mTitle" type="text"></div>
+    <h3 id="modalTitle">Yer İmi Ekle</h3>
+    <div class="form-group"><label for="mTitle">Başlık</label><input id="mTitle" type="text"></div>
     <div class="form-group"><label for="mUrl">URL</label><input id="mUrl" type="text"></div>
-    <div class="form-group"><label for="mCategory">Category</label><select id="mCategory"></select></div>
-    <div class="form-group"><label for="mIcon">Icon URL (optional)</label><input id="mIcon" type="text"></div>
-    <div class="switch"><input type="checkbox" id="mShowHome"><label for="mShowHome">Show on Home</label></div>
+    <div class="form-group"><label for="mCategory">Kategori</label><select id="mCategory"></select></div>
+    <div class="form-group"><label for="mIcon">İkon (opsiyonel)</label><input id="mIcon" type="text"></div>
+    <div class="switch"><input type="checkbox" id="mShowHome"><label for="mShowHome">Ana Sayfada Göster</label></div>
     <div class="modal-actions">
-      <button class="btn" id="cancelModal">Cancel</button>
-      <button class="btn" id="saveModal">Save</button>
+      <button class="btn" id="cancelModal">İptal</button>
+      <button class="btn" id="saveModal">Kaydet</button>
     </div>
   </div>
 </div>
 
 <div class="modal" id="modalCategory">
   <div class="modal-card">
-    <h3>Add Category</h3>
-    <div class="form-group"><label for="cTitle">Category Name</label><input id="cTitle" type="text"></div>
+    <h3>Kategori Ekle</h3>
+    <div class="form-group"><label for="cTitle">Kategori Adı</label><input id="cTitle" type="text"></div>
     <div class="modal-actions">
-      <button class="btn" id="cancelCategory">Cancel</button>
-      <button class="btn" id="saveCategory">Save</button>
+      <button class="btn" id="cancelCategory">İptal</button>
+      <button class="btn" id="saveCategory">Kaydet</button>
     </div>
   </div>
 </div>
 
 <div class="modal" id="modalCategoryEdit">
   <div class="modal-card">
-    <h3>Edit Category</h3>
-    <div class="form-group"><label for="ceTitle">Category Name</label><input id="ceTitle" type="text"></div>
-    <div class="form-group"><label for="ceOrder">Order (lower number is higher)</label><input id="ceOrder" type="number" min="0"></div>
+    <h3>Kategoriyi Düzenle</h3>
+    <div class="form-group"><label for="ceTitle">Kategori Adı</label><input id="ceTitle" type="text"></div>
+    <div class="form-group"><label for="ceOrder">Sıra (küçük = üstte)</label><input id="ceOrder" type="number" min="0"></div>
     <div class="modal-actions">
-      <button class="btn" id="cancelCategoryEdit">Cancel</button>
-      <button class="btn" id="saveCategoryEdit">Save</button>
+      <button class="btn" id="cancelCategoryEdit">İptal</button>
+      <button class="btn" id="saveCategoryEdit">Kaydet</button>
     </div>
   </div>
 </div>
@@ -545,7 +209,7 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI", // Lütfen kendi Firebase config bilgilerinizle değiştirin
+    apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI",
     authDomain: "my-g-bookmarks.firebaseapp.com",
     projectId: "my-g-bookmarks",
     storageBucket: "my-g-bookmarks.firebasestorage.app",
@@ -553,31 +217,19 @@ const firebaseConfig = {
     appId: "1:702837130313:web:bb7e64d33a772ed3d1eb98",
     measurementId: "G-WZVPMS2XY4"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 
-// --- STATE MANAGEMENT ---
-let BOOKMARKS = [];
-let currentUser = null;
-let currentView = 'home'; // 'home' or a category ID
-let viewMode = 'list'; // 'list' or 'card'
+let BOOKMARKS = [], currentUser = null, currentView = 'home';
 let editingState = { bookmarkId: null, categoryId: null };
+const $ = (s) => document.querySelector(s);
 
-const $ = (selector) => document.querySelector(selector);
-
-// --- CORE APP LOGIC ---
+// --- CORE ---
 function sortCategories() { BOOKMARKS.sort((a, b) => (a.order ?? 999) - (b.order ?? 999)); }
-function renderApp() {
-    sortCategories();
-    renderCategories();
-    if (currentView === 'home') renderHome();
-    else renderCategory(currentView);
-}
 async function handleDataChange() { await saveBookmarks(); renderApp(); }
 
-// --- AUTHENTICATION ---
+// --- AUTH ---
 onAuthStateChanged(auth, async user => {
     currentUser = user;
     if (user) {
@@ -587,13 +239,9 @@ onAuthStateChanged(auth, async user => {
         $('#userLogo').innerHTML = user.photoURL ? `<img src="${user.photoURL}" alt="User">` : (user.displayName || 'U').charAt(0);
         $('#loginBtn').style.display = 'none';
         $('#addCategoryBtn').style.display = 'block';
-        
-        const snap = await getDoc(doc(db, "bookmarks", currentUser.uid));
+        const snap = await getDoc(doc(db, "bookmarks", user.uid));
         BOOKMARKS = (snap.exists() ? snap.data().categories : []) || [];
-        BOOKMARKS.forEach((cat, i) => {
-            if (cat.order === undefined) cat.order = i;
-            cat.items = (cat.items || []).map(item => ({...item, showHome: !!item.showHome}));
-        });
+        BOOKMARKS.forEach((cat, i) => { cat.order ??= i; cat.items ??= []; });
         currentView = 'home';
         renderApp();
     } else {
@@ -605,633 +253,350 @@ onAuthStateChanged(auth, async user => {
         BOOKMARKS = [];
         currentView = 'home';
         renderApp();
-        $('#contentArea').innerHTML = "<div style='padding:20px; color:#666'>Please sign in.</div>";
+        $('#contentArea').innerHTML = "<div style='padding:20px;color:#666'>Lütfen giriş yapın.</div>";
     }
 });
 
-// --- DATA PERSISTENCE ---
+// --- SAVE ---
 async function saveBookmarks() {
     if (!currentUser) return;
-
-    // Kaydetmeden önce veriyi temizle
-    const cleanedBookmarks = BOOKMARKS.map(cat => {
-        const cleanedCat = { ...cat };
-        // Kategori öğelerini temizle
-        cleanedCat.items = (cat.items || []).map(item => {
+    const cleaned = BOOKMARKS.map(cat => ({
+        ...cat,
+        items: (cat.items || []).map(item => {
             const cleanedItem = {};
-            for (const key in item) {
-                // undefined olmayan tüm alanları kopyala
-                if (item[key] !== undefined) {
-                    cleanedItem[key] = item[key];
-                }
-            }
+            for (const k in item) if (item[k] !== undefined) cleanedItem[k] = item[k];
             return cleanedItem;
-        });
-
-        // Kategori alanlarını temizle (e.g. order)
-        for (const key in cleanedCat) {
-            if (cleanedCat[key] === undefined) {
-                delete cleanedCat[key];
-            }
-        }
-        return cleanedCat;
-    });
-       
-    try {
-        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks }); // Temizlenmiş veriyi kaydet
-        console.log('Data saved successfully');
-    } catch (error) {
-        console.error('Error saving data: ', error);
-        alert('Failed to save data: ' + error.message);
-    }
+        })
+    }));
+    await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleaned });
 }
 
-// --- UI RENDERING & HELPERS ---
-function createFaviconHTML(item, defaultChar) {
-    if (item.icon) {
-        return `<img src="${item.icon}" alt="" onerror="this.parentElement.innerHTML = '${defaultChar}'">`;
-    }
-    let hostname = '';
-    try { hostname = new URL(item.url).hostname; } catch (e) {}
-    if (hostname) {
-        const primarySrc = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
-        const fallbackSrc = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64`;
-        return `<img src="${primarySrc}" alt="" onerror="this.onerror=null; this.src='${fallbackSrc}';">`;
-    }
-    return defaultChar;
+// --- FAVICON ---
+function createFaviconHTML(item, fallback) {
+    if (item.icon) return `<img src="${item.icon}" alt="" onerror="this.parentElement.innerHTML='${fallback}'">`;
+    const hostname = item.url ? new URL(item.url).hostname : '';
+    if (!hostname) return fallback;
+    const primary = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+    const fallbackSrc = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64`;
+    return `<img src="${primary}" alt="" onerror="this.onerror=null;this.src='${fallbackSrc}';this.onerror=null;this.parentElement.innerHTML='${fallback}';">`;
 }
 
+// --- RENDER ---
 function renderCategories() {
-    const categoriesEl = $('#categories');
-    categoriesEl.innerHTML = '';
+    const el = $('#categories'); el.innerHTML = '';
     BOOKMARKS.forEach(cat => {
-        const el = document.createElement('div');
-        el.className = 'category' + (cat.id === currentView ? ' active' : '');
-        el.dataset.id = cat.id;
-        el.innerHTML = `<div class="cat-icon">${cat.title.charAt(0).toUpperCase()}</div><div class="cat-name">${cat.title}</div><button class="icon-btn edit-cat">🖊️</button><button class="icon-btn delete-cat">🗑️</button>`;
-        categoriesEl.appendChild(el);
+        const div = document.createElement('div');
+        div.className = `category${cat.id === currentView ? ' active' : ''}`;
+        div.dataset.id = cat.id;
+        div.innerHTML = `<div class="cat-icon">${cat.title.charAt(0).toUpperCase()}</div><div class="cat-name">${cat.title}</div>`;
+        el.appendChild(div);
     });
-}
-
-// --- RADIO WIDGET LOGIC ---
-const stations = [
-  { name: "Max FM", frequency: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
-  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
-  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
-  { name: "Groove Salad", frequency: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
-  { name: "Space Station Soma", frequency: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
-  { name: "Lush", frequency: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
-  { name: "Drone Zone", frequency: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
-  { name: "Secret Agent", frequency: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
-];
-
-let currentStationIndex = 0;
-let isPlaying = false;
-let volume = 50;
-const audio = new Audio();
-
-function updateRadioScreen() {
-  const station = stations[currentStationIndex];
-  $('#radioScreen').textContent = `${station.name} - ${station.frequency} MHz`;
-}
-
-function changeStation(direction) {
-  if (direction === "prev") {
-    currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
-  } else {
-    currentStationIndex = (currentStationIndex + 1) % stations.length;
-  }
-  audio.src = stations[currentStationIndex].url;
-  updateRadioScreen();
-  if (isPlaying) {
-    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
-  }
-}
-
-function togglePlayPause() {
-  isPlaying = !isPlaying;
-  const btn = $('#playPauseBtn');
-  btn.textContent = isPlaying ? '⏸' : '▶';
-  if (isPlaying) {
-    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
-  } else {
-    audio.pause();
-  }
-}
-
-function changeVolume(direction) {
-  if (direction === "up") {
-    volume = Math.min(volume + 10, 100);
-  } else {
-    volume = Math.max(volume - 10, 0);
-  }
-  audio.volume = volume / 100;
-  $('#volumeDisplay').textContent = `${volume}%`;
-}
-
-// Event Listeners for Radio
-$('#prevStationBtn').addEventListener('click', () => changeStation("prev"));
-$('#nextStationBtn').addEventListener('click', () => changeStation("next"));
-$('#playPauseBtn').addEventListener('click', togglePlayPause);
-$('#volumeDownBtn').addEventListener('click', () => changeVolume("down"));
-$('#volumeUpBtn').addEventListener('click', () => changeVolume("up"));
-
-// Initialize Radio
-updateRadioScreen();
-
-// --- WEATHER FUNCTIONS ---
-const API_KEY = 'cd6435a221fb4a71881124700252110';
-const BASE_URL = 'https://api.weatherapi.com/v1';
-
-function getWeatherIcon(code, isDay) {
-    const icons = {
-        1000: isDay ? '☀️' : '🌙', // Clear
-        1003: '⛅', // Partly cloudy
-        1006: '☁️', // Cloudy
-        1009: '☁️', // Overcast
-        1030: '🌫️', // Mist
-        1063: '🌦️', // Patchy rain possible
-        1066: '🌨️', // Patchy snow possible
-        1180: '🌧️', // Patchy light rain
-        1183: '🌧️', // Light rain
-        1186: '🌧️', // Moderate rain
-        1189: '🌧️', // Moderate rain
-        1192: '⛈️', // Heavy rain
-        1195: '⛈️', // Heavy rain
-        1210: '❄️', // Patchy light snow
-        1213: '❄️', // Light snow
-        1216: '❄️', // Patchy moderate snow
-        1219: '❄️', // Moderate snow
-        1222: '🌨️', // Patchy heavy snow
-        1225: '🌨️', // Heavy snow
-        1240: '🌦️', // Light rain shower
-        1243: '⛈️', // Moderate or heavy rain shower
-        1246: '⛈️', // Torrential rain shower
-        1273: '⛈️', // Patchy light rain with thunder
-        1276: '⛈️', // Moderate or heavy rain with thunder
-    };
-    return icons[code] || '☁️';
-}
-
-function createWeatherAnimation(code, animationEl) {
-    animationEl.innerHTML = '';
-    
-    // Rain animation (codes 1063, 1180-1246)
-    if (code >= 1180 && code <= 1246) {
-        for (let i = 0; i < 30; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'rain-drop';
-            drop.style.left = Math.random() * 100 + '%';
-            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
-            drop.style.animationDelay = Math.random() * 2 + 's';
-            animationEl.appendChild(drop);
-        }
-    }
-    // Snow animation (codes 1210-1225)
-    else if (code >= 1210 && code <= 1225) {
-        for (let i = 0; i < 20; i++) {
-            const flake = document.createElement('div');
-            flake.className = 'snow-flake';
-            flake.style.left = Math.random() * 100 + '%';
-            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            flake.style.animationDelay = Math.random() * 2 + 's';
-            animationEl.appendChild(flake);
-        }
-    }
-    // Sun animation (code 1000)
-    else if (code === 1000) {
-        const rays = document.createElement('div');
-        rays.className = 'sun-rays';
-        rays.innerHTML = '☀️';
-        animationEl.appendChild(rays);
-    }
-}
-
-async function fetchWeatherData(district) {
-    try {
-        const location = `${district}, Ankara, Turkey`;
-        
-        // Fetch current weather and forecast
-        const response = await fetch(
-            `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=yes&lang=tr`
-        );
-        
-        if (!response.ok) {
-            throw new Error('Hava durumu verileri alınamadı');
-        }
-        
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('API Error:', error);
-        return null;
-    }
-}
-
-function updateWeather(data) {
-    if (!data) return;
-
-    const current = data.current;
-    const forecast = data.forecast.forecastday;
-    
-    // Update current weather
-    document.getElementById('currentTemp').textContent = Math.round(current.temp_c) + '°';
-    document.getElementById('weatherDesc').textContent = current.condition.text;
-    document.getElementById('mainIcon').textContent = getWeatherIcon(current.condition.code, current.is_day);
-    document.getElementById('humidity').textContent = current.humidity + '%';
-    document.getElementById('wind').textContent = current.wind_kph.toFixed(1) + ' km/s';
-    document.getElementById('rainChance').textContent = (forecast[0].day.daily_chance_of_rain || 0) + '%';
-    
-    createWeatherAnimation(current.condition.code, document.getElementById('weatherAnimation'));
-    
-    // Update hourly forecast (next 12 hours)
-    const hourlyDiv = document.getElementById('hourlyForecast');
-    const allHours = [];
-    
-    // Get hours from all forecast days
-    forecast.forEach(day => {
-        allHours.push(...day.hour);
-    });
-    
-    // Get current hour index
-    const now = new Date();
-    const currentHour = now.getHours();
-    
-    // Filter to show next 12 hours starting from current hour
-    const next12Hours = allHours.slice(currentHour, currentHour + 12);
-    
-    hourlyDiv.innerHTML = next12Hours.map(hour => {
-        const time = new Date(hour.time);
-        return `
-            <div class="hour-card">
-                <div class="hour-time">${time.getHours()}:00</div>
-                <div class="hour-icon">${getWeatherIcon(hour.condition.code, hour.is_day)}</div>
-                <div class="hour-temp">${Math.round(hour.temp_c)}°</div>
-                <div class="hour-rain">💧 ${hour.chance_of_rain}%</div>
-            </div>
-        `;
-    }).join('');
-    
-    // Update daily forecast (3 days)
-    const dailyDiv = document.getElementById('dailyForecast');
-    const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-    
-    dailyDiv.innerHTML = forecast.map((day, index) => {
-        const date = new Date(day.date);
-        const dayName = index === 0 ? 'Bugün' : days[date.getDay()];
-        return `
-            <div class="day-card">
-                <div class="day-name">${dayName}</div>
-                <div class="day-icon">${getWeatherIcon(day.day.condition.code, 1)}</div>
-                <div class="day-temps">
-                    <span class="temp-max">${Math.round(day.day.maxtemp_c)}°</span>
-                    <span class="temp-min">${Math.round(day.day.mintemp_c)}°</span>
-                </div>
-                <div class="day-rain">💧 ${day.day.daily_chance_of_rain}%</div>
-            </div>
-        `;
-    }).join('');
-}
-
-async function initWeatherWidget() {
-    const hourlyDiv = document.getElementById('hourlyForecast');
-    const dailyDiv = document.getElementById('dailyForecast');
-    if (hourlyDiv) hourlyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
-    if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
-    
-    const data = await fetchWeatherData('Etimesgut');
-    if (data) {
-        updateWeather(data);
-    }
-
-    // Attach event listener
-    const districtSelect = document.getElementById('districtSelect');
-    if (districtSelect) {
-        districtSelect.addEventListener('change', async (e) => {
-            if (hourlyDiv) hourlyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
-            if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
-            
-            const data = await fetchWeatherData(e.target.value);
-            if (data) {
-                updateWeather(data);
-            }
-        });
-    }
 }
 
 function renderHome() {
-    $('#pageTitle').textContent = 'Home';
-    $('#viewControls').style.display = 'none';
+    $('#pageTitle').textContent = 'Ana Sayfa';
     const homeItems = BOOKMARKS.flatMap(c => (c.items || []).filter(i => i.showHome));
-    const contentArea = $('#contentArea');
+    const area = $('#contentArea'); area.innerHTML = '';
 
-    // Ana içerik alanını temizle
-    contentArea.innerHTML = '';
+    const container = document.createElement('div');
+    container.style.cssText = "display:flex;flex-direction:column;gap:28px;";
 
-    // Tüm ana sayfa içeriği için bir sarmalayıcı oluştur
-    const homeContainer = document.createElement('div');
-    homeContainer.style.cssText = "display: flex; flex-direction: column; gap: 24px;";
-
-    // --- BÖLÜM 1: Favori Yer İmleri ---
-    const favoritesSection = document.createElement('div');
-    const favoritesHeader = document.createElement('h2');
-    favoritesHeader.textContent = 'Favori Bookmarklar';
-    favoritesHeader.style.cssText = "font-size: 18px; font-weight: 700; margin-bottom: 12px; color:#333;";
-    favoritesSection.appendChild(favoritesHeader);
-
+    // Favorites
+    const favSec = document.createElement('div');
+    favSec.innerHTML = `<h2 style="font-size:19px;font-weight:700;margin:0 0 12px;color:#333;">Favori Yer İmleri</h2>`;
     if (homeItems.length === 0) {
-        favoritesSection.innerHTML += "<div style='padding:20px; color:#666'>Ana Sayfaya eklenmiş yer imi bulunmuyor.</div>";
+        favSec.innerHTML += `<div style="padding:20px;color:#777;font-style:italic;">Ana sayfada gösterilecek yer imi yok.</div>`;
     } else {
         const grid = document.createElement('div');
         grid.className = 'content-grid';
         homeItems.forEach(item => {
             const tile = document.createElement('a');
             tile.className = 'grid-tile';
-            tile.href = item.url;
-            tile.target = '_blank';
-            tile.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class='title'>${item.title}</div>`;
+            tile.href = item.url; tile.target = '_blank';
+            tile.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class="title">${item.title}</div>`;
             grid.appendChild(tile);
         });
-        favoritesSection.appendChild(grid);
+        favSec.appendChild(grid);
     }
-    homeContainer.appendChild(favoritesSection);
+    container.appendChild(favSec);
 
-    // --- BÖLÜM 2: Hava Durumu Widget ---
-    const weatherSection = document.createElement('div');
-    weatherSection.innerHTML = `
-        <div class="widget-container">
-            <div class="widget-header" id="header">
-                <div class="weather-animation" id="weatherAnimation"></div>
-                
-                <div class="district-selector">
-                    <select id="districtSelect">
-                        <option value="Etimesgut">Etimesgut</option>
-                        <option value="Çankaya">Çankaya</option>
-                        <option value="Keçiören">Keçiören</option>
-                        <option value="Mamak">Mamak</option>
-                        <option value="Yenimahalle">Yenimahalle</option>
-                        <option value="Altındağ">Altındağ</option>
-                        <option value="Sincan">Sincan</option>
-                        <option value="Pursaklar">Pursaklar</option>
-                        <option value="Gölbaşı">Gölbaşı</option>
-                        <option value="Polatlı">Polatlı</option>
-                        <option value="Ankara Merkez">Ankara Merkez</option>
-                    </select>
-                </div>
-
-                <div class="current-weather">
-                    <div>
-                        <div class="current-temp" id="currentTemp">--°</div>
-                        <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
-                    </div>
-                    <div class="weather-icon-main" id="mainIcon">☁️</div>
-                </div>
-
-                <div class="weather-details" id="weatherDetails">
-                    <div class="detail-item">
-                        <span class="detail-icon">💧</span>
-                        <span id="humidity">--%</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-icon">💨</span>
-                        <span id="wind">-- km/s</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-icon">🌧️</span>
-                        <span id="rainChance">--%</span>
-                    </div>
-                </div>
-
-                <div class="api-notice" id="apiNotice">
-                    WeatherAPI.com - Gerçek hava durumu verileri
-                </div>
-            </div>
-
-            <div class="widget-body">
-                <div class="section-title">📅 Saatlik</div>
-                <div class="hourly-forecast" id="hourlyForecast">
-                    <div class="loading">Yükleniyor...</div>
-                </div>
-
-                <div class="section-title">📆 Günlük</div>
-                <div class="daily-forecast" id="dailyForecast">
-                    <div class="loading">Yükleniyor...</div>
-                </div>
-            </div>
+    // Weather
+    const weatherHTML = `
+    <div class="widget-container">
+      <div class="widget-header">
+        <div class="weather-animation" id="weatherAnimation"></div>
+        <div class="district-selector">
+          <select id="districtSelect">
+            ${['Etimesgut','Çankaya','Keçiören','Mamak','Yenimahalle','Altındağ','Sincan','Pursaklar','Gölbaşı','Polatlı','Ankara Merkez'].map(d => `<option value="${d}">${d}</option>`).join('')}
+          </select>
         </div>
-    `;
-    homeContainer.appendChild(weatherSection);
+        <div class="current-weather">
+          <div>
+            <div class="current-temp" id="currentTemp">--°</div>
+            <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
+          </div>
+          <div class="weather-icon-main" id="mainIcon">Weather</div>
+        </div>
+        <div class="weather-details">
+          <div class="detail-item"><span class="detail-icon">Humidity</span><span id="humidity">--%</span></div>
+          <div class="detail-item"><span class="detail-icon">Wind</span><span id="wind">-- km/s</span></div>
+          <div class="detail-item"><span class="detail-icon">Rain</span><span id="rainChance">--%</span></div>
+        </div>
+        <div class="api-notice">WeatherAPI.com</div>
+      </div>
+      <div class="widget-body">
+        <div class="section-title">Saatlik</div>
+        <div class="hourly-forecast" id="hourlyForecast"><div class="loading">Yükleniyor...</div></div>
+        <div class="section-title">Günlük</div>
+        <div class="daily-forecast" id="dailyForecast"><div class="loading">Yükleniyor...</div></div>
+      </div>
+    </div>`;
+    const weatherSec = document.createElement('div');
+    weatherSec.innerHTML = weatherHTML;
+    container.appendChild(weatherSec);
+    area.appendChild(container);
 
-    contentArea.appendChild(homeContainer);
-
-    // Initialize weather widget after rendering
-    setTimeout(() => {
-        initWeatherWidget();
-    }, 100);
+    setTimeout(initWeatherWidget, 100);
 }
 
 function renderCategory(catId) {
     const cat = BOOKMARKS.find(c => c.id === catId);
     if (!cat) { currentView = 'home'; renderApp(); return; }
-
     $('#pageTitle').textContent = cat.title;
-    $('#viewControls').style.display = 'flex';
-    $('#listViewBtn').classList.toggle('active', viewMode === 'list');
-    $('#cardViewBtn').classList.toggle('active', viewMode === 'card');
-
-    const contentArea = $('#contentArea');
-    contentArea.innerHTML = '';
+    const area = $('#contentArea'); area.innerHTML = '';
     const items = cat.items || [];
-    const container = document.createElement('div');
 
-    if (items.length > 0) {
-        container.className = viewMode === 'list' ? 'bookmark-list' : 'content-grid';
-        items.forEach(item => {
-            const el = document.createElement(viewMode === 'list' ? 'div' : 'a');
-            el.className = viewMode === 'list' ? 'card' : 'grid-tile';
-            
-            if(viewMode === 'list') {
-                el.dataset.id = item.id;
-                el.dataset.categoryId = cat.id;
-                const iconHtml = createFaviconHTML(item, item.title.charAt(0).toUpperCase());
-                el.innerHTML = `
-                    <a href="${item.url}" target="_blank" class="fav" style="background:rgba(255,255,255,0.2); color:#667eea; text-decoration:none; display:flex; align-items:center; justify-content:center;">${iconHtml}</a>
-                    <div class="meta"><a href="${item.url}" target="_blank" style="text-decoration:none; color:inherit;"><div class="title">${item.title}</div></a><div class="url">${item.url}</div></div>
-                    <div class="actions"><button class="icon-btn edit-btn">✏️</button><button class="icon-btn delete-btn">🗑️</button></div>`;
-            } else {
-                el.href = item.url;
-                el.target = '_blank';
-                el.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class='title'>${item.title}</div>`;
-            }
-            container.appendChild(el);
-        });
+    const grid = document.createElement('div');
+    grid.className = 'content-grid';
+    if (items.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;padding:30px;text-align:center;color:#777;font-style:italic;">Bu kategori boş.</div>`;
     } else {
-        container.innerHTML = `<div style='padding:20px; color:#666'>This category is empty.</div>`;
+        items.forEach(item => {
+            const tile = document.createElement('a');
+            tile.className = 'grid-tile';
+            tile.href = item.url; tile.target = '_blank';
+            tile.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class="title">${item.title}</div>`;
+            grid.appendChild(tile);
+        });
     }
-    contentArea.appendChild(container);
-    
+    area.appendChild(grid);
+
     const addBtn = document.createElement('button');
-    addBtn.textContent = '+ Add Bookmark';
+    addBtn.textContent = '+ Yer İmi Ekle';
     addBtn.className = 'btn';
     addBtn.style.marginTop = '20px';
-    contentArea.appendChild(addBtn);
+    area.appendChild(addBtn);
 }
 
-// --- MODAL & DATA MANIPULATION ---
-function findBookmark(bookmarkId) {
-    for (const category of BOOKMARKS) {
-        const bookmark = (category.items || []).find(item => item.id === bookmarkId);
-        if (bookmark) return { bookmark, category };
-    }
-    return { bookmark: null, category: null };
+// --- RADIO ---
+const stations = [
+  { name: "Max FM", frequency: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
+  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
+  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
+  { name: "Groove Salad", frequency: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
+  { name: "Space Station", frequency: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
+  { name: "Lush", frequency: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
+  { name: "Drone Zone", frequency: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
+  { name: "Secret Agent", frequency: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
+];
+let currentStationIndex = 0, isPlaying = false, volume = 50;
+const audio = new Audio();
+audio.preload = "auto";
+
+function updateRadioScreen() {
+  const s = stations[currentStationIndex];
+  $('#radioScreen').textContent = `${s.name} - ${s.frequency} MHz`;
+}
+function loadAndPlay() {
+  const url = stations[currentStationIndex].url;
+  audio.src = url;
+  audio.load();
+  updateRadioScreen();
+  if (isPlaying) {
+    audio.play().catch(e => console.log("Oynatma hatası:", e));
+  }
+}
+function togglePlayPause() {
+  isPlaying = !isPlaying;
+  const btn = $('#playPauseBtn');
+  btn.textContent = isPlaying ? 'Pause' : 'Play';
+  btn.classList.toggle('playing', isPlaying);
+  if (isPlaying) audio.play().catch(() => {});
+  else audio.pause();
+}
+function changeStation(dir) {
+  currentStationIndex = (currentStationIndex + dir + stations.length) % stations.length;
+  loadAndPlay();
+}
+function changeVolume(delta) {
+  volume = Math.max(0, Math.min(100, volume + delta));
+  audio.volume = volume / 100;
+  $('#volumeDisplay').textContent = `${volume}%`;
 }
 
-function populateCategorySelect(selectedId = null) {
-    const select = $('#mCategory');
-    select.innerHTML = '';
-    BOOKMARKS.forEach(cat => {
-        select.innerHTML += `<option value="${cat.id}" ${cat.id === selectedId ? 'selected' : ''}>${cat.title}</option>`;
-    });
+// Radio Events
+$('#prevStationBtn').onclick = () => changeStation(-1);
+$('#nextStationBtn').onclick = () => changeStation(1);
+$('#playPauseBtn').onclick = togglePlayPause;
+$('#volumeDownBtn').onclick = () => changeVolume(-10);
+$('#volumeUpBtn').onclick = () => changeVolume(10);
+
+// Init Radio
+loadAndPlay();
+
+// --- WEATHER ---
+const API_KEY = 'cd6435a221fb4a71881124700252110';
+const BASE_URL = 'https://api.weatherapi.com/v1';
+
+function getWeatherIcon(code, isDay) {
+  const icons = {1000: isDay?'Sun':'Moon',1003:'Partly Cloudy',1006:'Cloud',1009:'Cloud',1030:'Mist',1063:'Rain',1066:'Snow',1180:'Rain',1183:'Rain',1186:'Rain',1189:'Rain',1192:'Heavy Rain',1195:'Heavy Rain',1210:'Snow',1213:'Snow',1216:'Snow',1219:'Snow',1222:'Snow',1225:'Snow',1240:'Rain',1243:'Heavy Rain',1246:'Heavy Rain',1273:'Thunder',1276:'Thunder'};
+  return icons[code] || 'Cloud';
 }
 
-function openModalForEdit(bookmarkId, categoryId) {
-    const { bookmark } = findBookmark(bookmarkId);
-    if (!bookmark) return;
-    editingState = { bookmarkId, categoryId };
-    $('#modalTitle').textContent = "Edit Bookmark";
-    $('#mTitle').value = bookmark.title;
-    $('#mUrl').value = bookmark.url;
-    $('#mIcon').value = bookmark.icon || '';
-    $('#mShowHome').checked = !!bookmark.showHome;
-    populateCategorySelect(categoryId);
-    $('#modal').classList.add('active');
+function createWeatherAnimation(code, el) {
+  el.innerHTML = '';
+  if (code >= 1180 && code <= 1246) {
+    for (let i = 0; i < 25; i++) { const d = document.createElement('div'); d.className='rain-drop'; d.style.left=Math.random()*100+'%'; d.style.animationDuration=(Math.random()*0.4+0.4)+'s'; d.style.animationDelay=Math.random()*2+'s'; el.appendChild(d); }
+  } else if (code >= 1210 && code <= 1225) {
+    for (let i = 0; i < 18; i++) { const s = document.createElement('div'); s.className='snow-flake'; s.style.left=Math.random()*100+'%'; s.style.animationDuration=(Math.random()*3+2)+'s'; s.style.animationDelay=Math.random()*2+'s'; el.appendChild(s); }
+  } else if (code === 1000) {
+    const sun = document.createElement('div'); sun.className='sun-rays'; sun.innerHTML='Sun'; el.appendChild(sun);
+  }
 }
 
+async function fetchWeatherData(district) {
+  try {
+    const res = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(district + ', Ankara, Turkey')}&days=3&aqi=yes&lang=tr`);
+    if (!res.ok) throw new Error("API hatası");
+    return await res.json();
+  } catch (e) { console.error(e); return null; }
+}
+
+function updateWeather(data) {
+  if (!data) return;
+  const c = data.current, f = data.forecast.forecastday;
+  $('#currentTemp').textContent = Math.round(c.temp_c) + '°';
+  $('#weatherDesc').textContent = c.condition.text;
+  $('#mainIcon').textContent = getWeatherIcon(c.condition.code, c.is_day);
+  $('#humidity').textContent = c.humidity + '%';
+  $('#wind').textContent = c.wind_kph.toFixed(1) + ' km/s';
+  $('#rainChance').textContent = (f[0].day.daily_chance_of_rain || 0) + '%';
+  createWeatherAnimation(c.condition.code, $('#weatherAnimation'));
+
+  const allHours = f.flatMap(d => d.hour);
+  const now = new Date().getHours();
+  const next12 = allHours.slice(now, now + 12);
+  $('#hourlyForecast').innerHTML = next12.map(h => {
+    const t = new Date(h.time);
+    return `<div class="hour-card"><div class="hour-time">${t.getHours()}:00</div><div class="hour-icon">${getWeatherIcon(h.condition.code, h.is_day)}</div><div class="hour-temp">${Math.round(h.temp_c)}°</div><div class="hour-rain">Rain ${h.chance_of_rain}%</div></div>`;
+  }).join('');
+
+  const days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  $('#dailyForecast').innerHTML = f.map((d, i) => {
+    const date = new Date(d.date), dayName = i===0?'Bugün':days[date.getDay()];
+    return `<div class="day-card"><div class="day-name">${dayName}</div><div class="day-icon">${getWeatherIcon(d.day.condition.code,1)}</div><div class="day-temps"><span class="temp-max">${Math.round(d.day.maxtemp_c)}°</span><span class="temp-min">${Math.round(d.day.mintemp_c)}°</span></div><div class="day-rain">Rain ${d.day.daily_chance_of_rain}%</div></div>`;
+  }).join('');
+}
+
+async function initWeatherWidget() {
+  $('#hourlyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+  $('#dailyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+  const data = await fetchWeatherData('Etimesgut');
+  if (data) updateWeather(data);
+  $('#districtSelect').onchange = async e => {
+    $('#hourlyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+    $('#dailyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
+    const data = await fetchWeatherData(e.target.value);
+    if (data) updateWeather(data);
+  };
+}
+
+// --- MODALS & EVENTS ---
 function openModalForAdd() {
-    if (currentView === 'home') { alert("Please select a category first."); return; }
-    editingState = { bookmarkId: null, categoryId: currentView };
-    $('#modalTitle').textContent = "Add Bookmark";
-    $('#mTitle').value = ''; $('#mUrl').value = ''; $('#mIcon').value = ''; $('#mShowHome').checked = false;
-    populateCategorySelect(currentView);
-    $('#modal').classList.add('active');
+  if (currentView === 'home') return alert("Lütfen bir kategori seçin.");
+  editingState = { bookmarkId: null, categoryId: currentView };
+  $('#modalTitle').textContent = "Yer İmi Ekle";
+  $('#mTitle').value = $('#mUrl').value = $('#mIcon').value = '';
+  $('#mShowHome').checked = false;
+  populateCategorySelect(currentView);
+  $('#modal').classList.add('active');
+}
+
+function openModalForEdit(bid, cid) {
+  const { bookmark } = BOOKMARKS.flatMap(c => (c.items || []).map(i => ({bookmark:i, cat:c}))).find(x => x.bookmark.id === bid) || {};
+  if (!bookmark) return;
+  editingState = { bookmarkId: bid, categoryId: cid };
+  $('#modalTitle').textContent = "Yer İmi Düzenle";
+  $('#mTitle').value = bookmark.title;
+  $('#mUrl').value = bookmark.url;
+  $('#mIcon').value = bookmark.icon || '';
+  $('#mShowHome').checked = !!bookmark.showHome;
+  populateCategorySelect(cid);
+  $('#modal').classList.add('active');
+}
+
+function populateCategorySelect(sel) {
+  const s = $('#mCategory'); s.innerHTML = '';
+  BOOKMARKS.forEach(c => s.innerHTML += `<option value="${c.id}" ${c.id===sel?'selected':''}>${c.title}</option>`);
 }
 
 $('#saveModal').onclick = async () => {
-    const title = $('#mTitle').value.trim();
-    let url = $('#mUrl').value.trim();
-    const newCatId = $('#mCategory').value;
-    if (!title || !url || !newCatId) return alert("Title, URL, and Category are required.");
-    if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
-
-    const bookmarkData = { title, url, icon: $('#mIcon').value.trim() || undefined, showHome: !!$('#mShowHome').checked };
-    const newCat = BOOKMARKS.find(c => c.id === newCatId);
-    if (!newCat) return alert("Invalid category.");
-
-    if (editingState.bookmarkId) {
-        const { bookmark, category } = findBookmark(editingState.bookmarkId);
-        if (bookmark) {
-            Object.assign(bookmark, bookmarkData);
-            if (newCatId !== editingState.categoryId) {
-                category.items = (category.items || []).filter(i => i.id !== editingState.bookmarkId);
-                newCat.items = newCat.items || []; newCat.items.push(bookmark);
-            }
-        }
-    } else {
-        newCat.items = newCat.items || []; newCat.items.push({ id: 'b_' + Date.now(), ...bookmarkData });
+  const title = $('#mTitle').value.trim(), url = $('#mUrl').value.trim(), catId = $('#mCategory').value;
+  if (!title || !url || !catId) return alert("Tüm alanlar zorunlu.");
+  const fullUrl = url.match(/^https?:\/\//i) ? url : 'https://' + url;
+  const data = { title, url: fullUrl, icon: $('#mIcon').value.trim()||undefined, showHome: $('#mShowHome').checked };
+  const cat = BOOKMARKS.find(c => c.id === catId);
+  if (editingState.bookmarkId) {
+    const old = BOOKMARKS.flatMap(c => c.items.map(i => ({i, c}))).find(x => x.i.id === editingState.bookmarkId);
+    if (old) {
+      Object.assign(old.i, data);
+      if (catId !== editingState.categoryId) {
+        old.c.items = old.c.items.filter(i => i.id !== editingState.bookmarkId);
+        cat.items.push(old.i);
+      }
     }
-    currentView = newCatId;
-    $('#modal').classList.remove('active');
-    await handleDataChange();
+  } else {
+    cat.items.push({ id: 'b_'+Date.now(), ...data });
+  }
+  currentView = catId;
+  $('#modal').classList.remove('active');
+  await handleDataChange();
 };
 
-function openCategoryEditModal(catId) {
-    const cat = BOOKMARKS.find(c => c.id === catId);
-    if (!cat) return;
-    editingState.categoryId = catId;
-    $('#ceTitle').value = cat.title;
-    $('#ceOrder').value = cat.order ?? '';
-    $('#modalCategoryEdit').classList.add('active');
-}
-
-$('#saveCategoryEdit').onclick = () => {
-    const title = $('#ceTitle').value.trim();
-    const order = parseInt($('#ceOrder').value);
-    if (!title) return alert("Category name is required.");
-    const catId = editingState.categoryId;
-    const cat = BOOKMARKS.find(c => c.id === catId);
-    if (cat) {
-        if (BOOKMARKS.some(c => c.id !== catId && c.title.toLowerCase() === title.toLowerCase())) {
-            return alert(`Category "${title}" already exists.`);
-        }
-        cat.title = title;
-        cat.order = isNaN(order) ? 999 : order;
-    }
-    $('#modalCategoryEdit').classList.remove('active');
-    handleDataChange();
-};
-
+// Kategori Ekle/Düzenle
+$('#addCategoryBtn').onclick = () => { $('#cTitle').value=''; $('#modalCategory').classList.add('active'); };
 $('#saveCategory').onclick = () => {
-    const title = $('#cTitle').value.trim();
-    if (!title) return;
-    if (BOOKMARKS.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert(`Category "${title}" already exists.`);
-    const minOrder = BOOKMARKS.length > 0 ? Math.min(...BOOKMARKS.map(c => c.order ?? 0)) : 0;
-    BOOKMARKS.unshift({ id: 'cat_' + Date.now(), title, order: minOrder - 1, color: `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`, items: [] });
-    $('#modalCategory').classList.remove('active');
-    handleDataChange();
+  const t = $('#cTitle').value.trim();
+  if (!t || BOOKMARKS.some(c => c.title.toLowerCase() === t.toLowerCase())) return alert("Geçersiz veya mevcut kategori.");
+  const min = BOOKMARKS.length ? Math.min(...BOOKMARKS.map(c=>c.order??0)) : 0;
+  BOOKMARKS.unshift({ id:'cat_'+Date.now(), title:t, order:min-1, items:[] });
+  $('#modalCategory').classList.remove('active');
+  handleDataChange();
 };
 
-// --- EVENT LISTENERS ---
-$('#loginBtn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => console.error("Sign in error", e));
-$('#miniSignOutBtn').onclick = () => signOut(auth);
+$('#categories').onclick = e => {
+  const cat = e.target.closest('.category');
+  if (!cat) return;
+  currentView = cat.dataset.id;
+  renderApp();
+};
+
+$('#contentArea').onclick = e => {
+  if (e.target.closest('button')?.textContent.includes('+ Yer İmi Ekle')) openModalForAdd();
+};
+
 $('#homeBtn').onclick = () => { currentView = 'home'; renderApp(); };
-$('#addCategoryBtn').onclick = () => { $('#cTitle').value = ''; $('#modalCategory').classList.add('active'); };
-$('#listViewBtn').onclick = () => { viewMode = 'list'; renderApp(); };
-$('#cardViewBtn').onclick = () => { viewMode = 'card'; renderApp(); };
+$('#loginBtn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
+$('#miniSignOutBtn').onclick = () => signOut(auth);
 
-$('#categories').addEventListener('click', e => {
-    const categoryEl = e.target.closest('.category');
-    if (!categoryEl) return;
-    const catId = categoryEl.dataset.id;
-    if (e.target.closest('.edit-cat')) openCategoryEditModal(catId);
-    else if (e.target.closest('.delete-cat')) {
-        if (!confirm("Bookmarks will be moved to 'Diğer' category.")) return;
-        const catToDelete = BOOKMARKS.find(c => c.id === catId);
-        if (!catToDelete) return;
-        let otherCat = BOOKMARKS.find(c => c.id === 'cat_other');
-        if (!otherCat) {
-            otherCat = { id: 'cat_other', title: 'Diğer', color: '#808080', order: 9999, items: [] };
-            BOOKMARKS.push(otherCat);
-        }
-        if ((catToDelete.items || []).length > 0) {
-            otherCat.items = [...(otherCat.items || []), ...catToDelete.items];
-        }
-        BOOKMARKS = BOOKMARKS.filter(c => c.id !== catId);
-        if (currentView === catId) currentView = 'home';
-        handleDataChange();
-    } else {
-        currentView = catId; renderApp();
-    }
-});
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active')); });
+['#cancelModal','#cancelCategory','#cancelCategoryEdit'].forEach(s=>$(s).onclick=()=>{$(s).closest('.modal').classList.remove('active');});
 
-$('#contentArea').addEventListener('click', e => {
-    const addBtn = e.target.closest('.btn');
-    if (addBtn && addBtn.textContent.includes('+ Add Bookmark')) return openModalForAdd();
-    const card = e.target.closest('.card');
-    if (!card) return;
-    if (e.target.closest('.edit-btn')) openModalForEdit(card.dataset.id, card.dataset.categoryId);
-    else if (e.target.closest('.delete-btn')) {
-        if (!confirm("Are you sure?")) return;
-        const { category } = findBookmark(card.dataset.id);
-        if (category) category.items = (category.items || []).filter(i => i.id !== card.dataset.id);
-        handleDataChange();
-    }
-});
-
-// Close Modals
-[$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit')].forEach(m => m.classList.remove('active')); });
-
-// Initialize app
+function renderApp() {
+    sortCategories();
+    renderCategories();
+    currentView === 'home' ? renderHome() : renderCategory(currentView);
+}
 renderApp();
 </script>
 </body>
