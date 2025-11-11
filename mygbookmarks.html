@@ -6,132 +6,114 @@
 <title>My Bookmarks v1.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); --card:rgba(255, 255, 255, 0.95); --muted:#e0e6ff; --accent:#667eea; font-family:'Inter',sans-serif; }
-html,body{margin:0;height:100%;background:var(--bg);color:#ffffff;}
-.app{display:grid;grid-template-columns:280px 1fr;height:100vh;}
-.sidebar{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-right:1px solid rgba(255,255,255,0.1); padding:20px; display:flex;flex-direction:column;gap:16px; color:#ffffff; }
-#versionInfo {
-    background: rgba(255, 255, 255, 0.2); color: #ffffff; padding: 3px 8px;
-    border-radius: 8px; font-size: 12px; font-weight: 600;
-    align-self: flex-start; margin-bottom: 8px;
+:root {
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card: rgba(255, 255, 255, 0.95);
+  --muted: #e0e6ff;
+  --accent: #667eea;
+  font-family: 'Inter', sans-serif;
 }
-.brand{display:flex;align-items:center;gap:12px;}
-.logo{ width:48px;height:48px;border-radius:50%; background:conic-gradient(from 180deg,#ffffff,#e0e6ff,#a8e6cf,#ffd93d,#ffffff); display:flex;align-items:center;justify-content:center; font-weight:800;color:#667eea;overflow:hidden; }
-.logo img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
-h1{font-size:17px;margin:0;color:#ffffff;}
-#sidebarSubtitleContainer{ display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
-#miniSignOutBtn { background: rgba(255,255,255,0.1); color: #ffffff; border:none; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background .2s; }
-#miniSignOutBtn:hover { background: rgba(255,255,255,0.2); }
-.categories{flex:1;overflow:auto;padding-top:6px; display:flex; flex-direction:column; gap:4px;}
-.category{ display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px; cursor:pointer;user-select:none;transition: background .2s, opacity .2s, transform .2s; position:relative; box-shadow:0 5px 15px rgba(0,0,0,0.2); background:rgba(255,255,255,0.1); }
-.category.dragging{ opacity: 0.5; background: rgba(255,255,255,0.2); }
-.category:hover{background:rgba(255,255,255,0.2); transform:translateY(-2px);}
-.category.active{background:rgba(255,255,255,0.3);}
-.cat-icon{width:36px;height:36px;border-radius:8px; background:rgba(255,255,255,0.2); display:flex;align-items:center;justify-content:center;font-weight:700; flex-shrink: 0; color:#ffffff;}
-.cat-name{font-weight:600;flex:1;pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color:#ffffff;}
-.main{ display:flex;flex-direction:column;height:100%;overflow:hidden; background:var(--card); padding:24px; border-radius:20px 0 0 20px; margin:20px 0; box-shadow:0 20px 60px rgba(0, 0, 0, 0.3); color:#333; }
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.header-title{font-size:20px;font-weight:800; color:#333;}
-#viewControls { display: none; }
-.content-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:18px; }
-.grid-tile{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:20px;padding:16px;text-align:center; box-shadow:0 6px 16px rgba(0,0,0,0.1); transition:transform .2s, box-shadow .2s;cursor:pointer; text-decoration: none; color: #ffffff;}
-.grid-tile:hover{transform:translateY(-3px); box-shadow:0 10px 25px rgba(102, 126, 234, 0.3);}
-.grid-tile img{width:48px;height:48px;border-radius:12px;margin-bottom:8px; object-fit:cover;}
-.grid-tile .title{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%; color:#ffffff;}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,15,28,0.35);z-index:100;}
-.modal.active{display:flex;}
-.modal-card{ width:400px;background:var(--card);padding:20px;border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.15); backdrop-filter:blur(10px); color:#333; }
-.form-group { margin-bottom: 12px; }
-label{font-size:13px;color:#666;display:block; margin-bottom: 4px;}
-input[type=text], input[type=number], textarea, select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);box-sizing:border-box;}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;}
-.btn{padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border:1px solid rgba(0,0,0,0.05);cursor:pointer; transition:background .2s; color:#ffffff;}
-.btn:hover{background:linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);}
-.switch{display:flex;align-items:center;gap:8px;margin-top:12px; user-select:none;}
-.delete-cat, .edit-cat{ display:none; }
-.category:hover .delete-cat, .category:hover .edit-cat{ display:grid; }
-#homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius:20px; background:rgba(255,255,255,0.1); color:#ffffff; }
-#homeBtn svg { width: 22px; height: 22px; }
-/* Weather Styles */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-.widget-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    max-width: 100%;
-    width: 100%;
-    overflow: visible;
-    backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: row;
-    height: auto;
-    min-height: 200px;
+html, body { height: 100%; background: var(--bg); color: #fff; }
+.app { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
+
+.sidebar {
+  background: var(--bg); padding: 20px; display: flex; flex-direction: column; gap: 16px;
+  border-right: 1px solid rgba(255,255,255,0.1); color: #fff;
 }
-.widget-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    border-radius: 20px 0 0 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 200px;
-}
+#versionInfo { background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; align-self: flex-start; margin-bottom: 8px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { width: 48px; height: 48px; border-radius: 50%; background: conic-gradient(from 180deg,#fff,#e0e6ff,#a8e6cf,#ffd93d,#fff); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--accent); overflow: hidden; }
+.logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+h1 { font-size: 17px; margin: 0; }
+#sidebarSubtitleContainer { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
+#miniSignOutBtn { background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
+#miniSignOutBtn:hover { background: rgba(255,255,255,0.2); }
+
+.categories { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 4px; padding-top: 6px; }
+.category { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; cursor: pointer; user-select: none; transition: all .2s; background: rgba(255,255,255,0.1); position: relative; }
+.category:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+.category.active { background: rgba(255,255,255,0.3); }
+.cat-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+.cat-name { font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.main { display: flex; flex-direction: column; height: 100%; background: var(--card); padding: 24px; border-radius: 20px 0 0 20px; margin: 20px 0; box-shadow: 0 20px 60px rgba(0,0,0,0.3); color: #333; overflow: hidden; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.header-title { font-size: 20px; font-weight: 800; color: #333; }
+
+.content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
+.grid-tile { background: var(--bg); border-radius: 20px; padding: 16px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.1); transition: all .2s; text-decoration: none; color: #fff; }
+.grid-tile:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(102,126,234,0.3); }
+.grid-tile img { width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px; object-fit: cover; }
+.grid-tile .title { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.btn { padding: 8px 12px; border-radius: 10px; background: var(--bg); border: 1px solid rgba(0,0,0,0.05); cursor: pointer; color: #fff; transition: background .2s; }
+.btn:hover { background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%); }
+
+.modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(8,15,28,0.35); z-index: 100; }
+.modal.active { display: flex; }
+.modal-card { width: 400px; background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); backdrop-filter: blur(10px); color: #333; }
+.form-group { margin-bottom: 12px; }
+label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; }
+input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.switch { display: flex; align-items: center; gap: 8px; margin-top: 12px; user-select: none; }
+
+.delete-cat, .edit-cat { display: none; }
+.category:hover .delete-cat, .category:hover .edit-cat { display: grid; }
+.icon-btn { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; }
+.icon-btn:hover { background: rgba(255,255,255,0.2); }
+
+#homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius: 20px; background: rgba(255,255,255,0.1); color: #fff; }
+#homeBtn svg { width: 22px; height: 22px; }
+
+/* Radio Widget */
+#radioWidget { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; text-align: center; }
+#radioScreen { background: #000; color: #00ff00; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-size: 0.9rem; }
+.radio-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.radio-btn { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 6px 12px; border-radius: 50%; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+.radio-btn:hover { background: rgba(255,255,255,0.3); }
+.volume-controls { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+.volume-btn { background: rgba(255,255,255,0.2); color: #fff; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
+.volume-btn:hover { background: rgba(255,255,255,0.3); }
+#playPauseBtn { background: rgba(0,255,0,0.3); font-size: 1.3rem; }
+#playPauseBtn:hover { background: rgba(0,255,0,0.4); }
+
+/* Weather Widget */
+.widget-container { background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; overflow: visible; backdrop-filter: blur(10px); min-height: 200px; }
+.widget-header { background: var(--bg); padding: 15px; color: white; position: relative; overflow: hidden; border-radius: 20px 0 0 20px; flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 200px; }
 .weather-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.rain-drop { position: absolute; width: 2px; height: 20px; background: linear-gradient(transparent, rgba(255, 255, 255, 0.6)); animation: rain-fall linear infinite; }
+.rain-drop { position: absolute; width: 2px; height: 20px; background: linear-gradient(transparent, rgba(255,255,255,0.6)); animation: rain-fall linear infinite; }
 @keyframes rain-fall { to { transform: translateY(200px); } }
 .snow-flake { position: absolute; width: 10px; height: 10px; background: white; border-radius: 50%; animation: snow-fall linear infinite; }
 @keyframes snow-fall { to { transform: translateY(200px) rotate(360deg); } }
 .sun-rays { position: absolute; top: 50%; right: 20px; width: 60px; height: 60px; animation: rotate 20s linear infinite; font-size: 40px; }
 @keyframes rotate { to { transform: rotate(360deg); } }
-.district-selector { position: relative; z-index: 10; margin-bottom: 10px; }
-.district-selector select { width: 100%; padding: 6px 12px; border: none; border-radius: 10px; font-size: 12px; background: rgba(255, 255, 255, 0.2); color: white; cursor: pointer; outline: none; }
-.district-selector select option { background: #667eea; color: white; }
-.current-weather { position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.district-selector select { width: 100%; padding: 6px 12px; border: none; border-radius: 10px; font-size: 12px; background: rgba(255,255,255,0.2); color: white; cursor: pointer; outline: none; }
+.current-weather { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .current-temp { font-size: 36px; font-weight: bold; }
 .weather-icon-main { font-size: 40px; }
 .weather-desc { font-size: 12px; margin-top: 5px; text-align: center; }
-.weather-details { display: flex; gap: 10px; position: relative; z-index: 10; flex-wrap: wrap; justify-content: center; }
+.weather-details { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .detail-item { display: flex; align-items: center; gap: 4px; font-size: 11px; }
 .detail-icon { font-size: 14px; }
-.api-notice { background: rgba(255, 255, 255, 0.2); padding: 5px; border-radius: 5px; font-size: 8px; margin-top: 5px; text-align: center; }
+.api-notice { background: rgba(255,255,255,0.2); padding: 5px; border-radius: 5px; font-size: 8px; margin-top: 5px; text-align: center; }
 .widget-body { padding: 15px; flex: 2; display: flex; flex-direction: column; overflow: hidden; border-radius: 0 20px 20px 0; }
 .section-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; }
-.hourly-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; margin-bottom: 10px; flex: 1; }
-.hourly-forecast::-webkit-scrollbar { height: 4px; }
-.hourly-forecast::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-.hourly-forecast::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
-.hour-card { min-width: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 8px; text-align: center; color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s; flex-shrink: 0; }
-.hour-card:hover { transform: translateY(-2px); }
-.hour-time { font-size: 10px; margin-bottom: 2px; opacity: 0.9; }
-.hour-icon { font-size: 20px; margin: 2px 0; }
-.hour-temp { font-size: 14px; font-weight: bold; }
-.hour-rain { font-size: 8px; margin-top: 2px; opacity: 0.8; }
-.daily-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; }
-.day-card { min-width: 80px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 10px; padding: 10px; text-align: center; transition: all 0.3s; border: 1px solid transparent; flex-shrink: 0; }
-.day-card:hover { border-color: #667eea; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2); }
-.day-name { font-weight: bold; color: #667eea; margin-bottom: 5px; font-size: 11px; }
-.day-icon { font-size: 24px; margin: 5px 0; }
+.hourly-forecast, .daily-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; }
+.hourly-forecast::-webkit-scrollbar, .daily-forecast::-webkit-scrollbar { height: 4px; }
+.hourly-forecast::-webkit-scrollbar-thumb, .daily-forecast::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+.hour-card, .day-card { background: var(--bg); border-radius: 10px; padding: 8px; text-align: center; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform .3s; flex-shrink: 0; }
+.hour-card:hover, .day-card:hover { transform: translateY(-2px); }
+.hour-time, .day-name { font-size: 10px; margin-bottom: 2px; opacity: 0.9; }
+.day-name { font-weight: bold; color: var(--accent); font-size: 11px; }
+.hour-icon, .day-icon { font-size: 20px; margin: 2px 0; }
+.day-icon { font-size: 24px; }
+.hour-temp, .temp-max { font-size: 14px; font-weight: bold; }
 .day-temps { display: flex; justify-content: center; gap: 4px; font-size: 12px; color: #333; }
-.temp-max { font-weight: bold; }
 .temp-min { opacity: 0.6; }
-.day-rain { font-size: 8px; margin-top: 3px; opacity: 0.8; }
-.loading { text-align: center; padding: 10px; font-size: 12px; color: #667eea; }
-.error { text-align: center; padding: 10px; color: #e74c3c; }
-/* Radio Widget */
-#radioWidget { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; text-align: center; }
-#radioScreen { background: #000; color: #00ff00; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.9rem; font-family: 'Courier New', monospace; }
-.radio-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.radio-btn { background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 6px 12px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-.radio-btn:hover { background: rgba(255,255,255,0.3); }
-.volume-controls { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-.volume-btn { background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
-.volume-btn:hover { background: rgba(255,255,255,0.3); }
-#playPauseBtn { background: rgba(0,255,0,0.3); font-size: 1.3rem; }
-#playPauseBtn:hover { background: rgba(0,255,0,0.4); }
+.hour-rain, .day-rain { font-size: 8px; margin-top: 2px; opacity: 0.8; }
+.loading { text-align: center; padding: 10px; font-size: 12px; color: var(--accent); }
 </style>
 </head>
 <body>
@@ -142,80 +124,34 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
       <div class="logo" id="userLogo">Y</div>
       <div>
         <h1 id="sidebarTitle">My Bookmarks</h1>
-        <div id="sidebarSubtitleContainer" style="display: none;">
-            <span id="sidebarSubtitle"></span>
-            <button id="miniSignOutBtn">Sign Out</button>
+        <div id="sidebarSubtitleContainer" style="display:none">
+          <span id="sidebarSubtitle"></span>
+          <button id="miniSignOutBtn">Sign Out</button>
         </div>
       </div>
     </div>
     <button class="btn" id="loginBtn">Sign in with Google</button>
-    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.2); margin: 0;">
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.2); margin:0">
     <button class="btn" id="homeBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"></path></svg>
-        Home
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"></path></svg>
+      Home
     </button>
-    <button class="btn" id="addCategoryBtn" style="display:none;">+ Add Category</button>
+    <button class="btn" id="addCategoryBtn" style="display:none">+ Add Category</button>
     <div class="categories" id="categories"></div>
-    <!-- Radio Widget -->
-    <div id="radioWidget">
-      <div id="radioScreen">Radyo - İstasyon Seçin</div>
-      <div class="radio-controls">
-        <button class="radio-btn" id="prevStationBtn">Previous</button>
-        <button class="radio-btn" id="playPauseBtn">Play</button>
-        <button class="radio-btn" id="nextStationBtn">Next</button>
-      </div>
-      <div class="volume-controls">
-        <button class="volume-btn" id="volumeDownBtn">−</button>
-        <span id="volumeDisplay">50%</span>
-        <button class="volume-btn" id="volumeUpBtn">+</button>
-      </div>
-    </div>
+    <div id="radioWidget"></div>
   </aside>
   <main class="main" id="main">
     <div class="header">
       <div class="header-title" id="pageTitle">Home</div>
-      <div id="viewControls"></div>
     </div>
     <div id="contentArea"></div>
   </main>
 </div>
 
 <!-- MODALS -->
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <h3 id="modalTitle">Add/Edit Bookmark</h3>
-    <div class="form-group"><label for="mTitle">Title</label><input id="mTitle" type="text"></div>
-    <div class="form-group"><label for="mUrl">URL</label><input id="mUrl" type="text"></div>
-    <div class="form-group"><label for="mCategory">Category</label><select id="mCategory"></select></div>
-    <div class="form-group"><label for="mIcon">Icon URL (optional)</label><input id="mIcon" type="text"></div>
-    <div class="switch"><input type="checkbox" id="mShowHome"><label for="mShowHome">Show on Home</label></div>
-    <div class="modal-actions">
-      <button class="btn" id="cancelModal">Cancel</button>
-      <button class="btn" id="saveModal">Save</button>
-    </div>
-  </div>
-</div>
-<div class="modal" id="modalCategory">
-  <div class="modal-card">
-    <h3>Add Category</h3>
-    <div class="form-group"><label for="cTitle">Category Name</label><input id="cTitle" type="text"></div>
-    <div class="modal-actions">
-      <button class="btn" id="cancelCategory">Cancel</button>
-      <button class="btn" id="saveCategory">Save</button>
-    </div>
-  </div>
-</div>
-<div class="modal" id="modalCategoryEdit">
-  <div class="modal-card">
-    <h3>Edit Category</h3>
-    <div class="form-group"><label for="ceTitle">Category Name</label><input id="ceTitle" type="text"></div>
-    <div class="form-group"><label for="ceOrder">Order (lower number is higher)</label><input id="ceOrder" type="number" min="0"></div>
-    <div class="modal-actions">
-      <button class="btn" id="cancelCategoryEdit">Cancel</button>
-      <button class="btn" id="saveCategoryEdit">Save</button>
-    </div>
-  </div>
-</div>
+<div class="modal" id="bookmarkModal"></div>
+<div class="modal" id="categoryModal"></div>
+<div class="modal" id="categoryEditModal"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -223,509 +159,496 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI",
-    authDomain: "my-g-bookmarks.firebaseapp.com",
-    projectId: "my-g-bookmarks",
-    storageBucket: "my-g-bookmarks.firebasestorage.app",
-    messagingSenderId: "702837130313",
-    appId: "1:702837130313:web:bb7e64d33a772ed3d1eb98",
-    measurementId: "G-WZVPMS2XY4"
+  apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI",
+  authDomain: "my-g-bookmarks.firebaseapp.com",
+  projectId: "my-g-bookmarks",
+  storageBucket: "my-g-bookmarks.firebasestorage.app",
+  messagingSenderId: "702837130313",
+  appId: "1:702837130313:web:bb7e64d33a772ed3d1eb98"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 
-// --- STATE ---
-let BOOKMARKS = [];
-let currentUser = null;
-let currentView = 'home';
-let editingState = { bookmarkId: null, categoryId: null };
-const $ = (s) => document.querySelector(s);
+// ==================== MODÜLER UYGULAMA ====================
 
-// --- CORE ---
-function sortCategories() { BOOKMARKS.sort((a, b) => (a.order ?? 999) - (b.order ?? 999)); }
-function renderApp() {
-    sortCategories();
-    renderCategories();
-    if (currentView === 'home') renderHome();
-    else renderCategory(currentView);
-}
-async function handleDataChange() { await saveBookmarks(); renderApp(); }
+class App {
+  constructor() {
+    this.state = {
+      user: null,
+      bookmarks: [],
+      currentView: 'home'
+    };
+    this.$ = (s) => document.querySelector(s);
+    this.init();
+  }
 
-// --- AUTH ---
-onAuthStateChanged(auth, async user => {
-    currentUser = user;
-    if (user) {
-        $('#sidebarTitle').textContent = user.displayName || 'Bookmarks';
-        $('#sidebarSubtitle').textContent = user.email;
-        $('#sidebarSubtitleContainer').style.display = 'flex';
-        $('#userLogo').innerHTML = user.photoURL ? `<img src="${user.photoURL}" alt="User">` : (user.displayName || 'U').charAt(0);
-        $('#loginBtn').style.display = 'none';
-        $('#addCategoryBtn').style.display = 'block';
+  async init() {
+    this.renderModals();
+    this.setupAuth();
+    this.setupEventDelegation();
+    new RadioWidget(this.$('#radioWidget'));
+    this.render();
+  }
 
-        const snap = await getDoc(doc(db, "bookmarks", currentUser.uid));
-        BOOKMARKS = (snap.exists() ? snap.data().categories : []) || [];
-        BOOKMARKS.forEach((cat, i) => {
-            if (cat.order === undefined) cat.order = i;
-            cat.items = (cat.items || []).map(item => ({...item, showHome: !!item.showHome}));
+  renderModals() {
+    this.$('#bookmarkModal').innerHTML = this.getBookmarkModalHTML();
+    this.$('#categoryModal').innerHTML = this.getCategoryModalHTML();
+    this.$('#categoryEditModal').innerHTML = this.getCategoryEditModalHTML();
+  }
+
+  setupAuth() {
+    onAuthStateChanged(auth, async user => {
+      this.state.user = user;
+      this.updateUI();
+      if (user) {
+        const snap = await getDoc(doc(db, "bookmarks", user.uid));
+        this.state.bookmarks = (snap.exists() ? snap.data().categories : []) || [];
+        this.state.bookmarks.forEach((cat, i) => {
+          cat.order ??= i;
+          cat.items ??= [];
         });
-        currentView = 'home';
-        renderApp();
-    } else {
-        $('#sidebarTitle').textContent = 'My Bookmarks';
-        $('#sidebarSubtitleContainer').style.display = 'none';
-        $('#userLogo').textContent = 'Y';
-        $('#loginBtn').style.display = 'block';
-        $('#addCategoryBtn').style.display = 'none';
-        BOOKMARKS = [];
-        currentView = 'home';
-        renderApp();
-        $('#contentArea').innerHTML = "<div style='padding:20px; color:#666'>Please sign in.</div>";
-    }
-});
-
-// --- SAVE ---
-async function saveBookmarks() {
-    if (!currentUser) return;
-    const cleanedBookmarks = BOOKMARKS.map(cat => {
-        const cleanedCat = { ...cat };
-        cleanedCat.items = (cat.items || []).map(item => {
-            const cleanedItem = {};
-            for (const key in item) if (item[key] !== undefined) cleanedItem[key] = item[key];
-            return cleanedItem;
-        });
-        for (const key in cleanedCat) if (cleanedCat[key] === undefined) delete cleanedCat[key];
-        return cleanedCat;
+      } else {
+        this.state.bookmarks = [];
+      }
+      this.render();
     });
+  }
+
+  updateUI() {
+    const user = this.state.user;
+    this.$('#sidebarTitle').textContent = user?.displayName || 'My Bookmarks';
+    this.$('#sidebarSubtitle').textContent = user?.email || '';
+    this.$('#sidebarSubtitleContainer').style.display = user ? 'flex' : 'none';
+    this.$('#userLogo').innerHTML = user?.photoURL ? `<img src="${user.photoURL}" alt="User">` : (user?.displayName?.[0] || 'Y');
+    this.$('#loginBtn').style.display = user ? 'none' : 'block';
+    this.$('#addCategoryBtn').style.display = user ? 'block' : 'none';
+  }
+
+  async save() {
+    if (!this.state.user) return;
+    const clean = this.state.bookmarks.map(cat => {
+      const c = { ...cat };
+      c.items = c.items.map(i => {
+        const x = {};
+        for (const k in i) if (i[k] !== undefined) x[k] = i[k];
+        return x;
+      });
+      return c;
+    });
+    await setDoc(doc(db, "bookmarks", this.state.user.uid), { categories: clean });
+  }
+
+  render() {
+    this.renderCategories();
+    this.state.currentView === 'home' ? this.renderHome() : this.renderCategory(this.state.currentView);
+  }
+
+  renderCategories() {
+    const container = this.$('#categories');
+    container.innerHTML = '';
+    [...this.state.bookmarks].sort((a,b) => (a.order??999)-(b.order??999)).forEach(cat => {
+      const el = document.createElement('div');
+      el.className = `category ${cat.id === this.state.currentView ? 'active' : ''}`;
+      el.dataset.id = cat.id;
+      el.innerHTML = `
+        <div class="cat-icon">${cat.title[0].toUpperCase()}</div>
+        <div class="cat-name">${cat.title}</div>
+        <button class="icon-btn edit-cat">Edit</button>
+        <button class="icon-btn delete-cat">Delete</button>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  renderHome() {
+    this.$('#pageTitle').textContent = 'Home';
+    const items = this.state.bookmarks.flatMap(c => c.items.filter(i => i.showHome));
+    const html = `
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div>
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:12px;color:#333">Favori Bookmarklar</h2>
+          ${items.length ? `<div class="content-grid">${items.map(i => this.getTileHTML(i)).join('')}</div>` : '<div style="padding:20px;color:#666">Ana sayfaya eklenmiş yer imi yok.</div>'}
+        </div>
+        <div id="weatherWidget"></div>
+      </div>
+    `;
+    this.$('#contentArea').innerHTML = html;
+    new WeatherWidget(this.$('#weatherWidget'));
+  }
+
+  renderCategory(id) {
+    const cat = this.state.bookmarks.find(c => c.id === id);
+    if (!cat) return this.goHome();
+    this.$('#pageTitle').textContent = cat.title;
+    const html = `
+      <div class="content-grid">
+        ${cat.items.map(i => this.getTileHTML(i)).join('')}
+      </div>
+      ${cat.items.length ? '' : '<div style="padding:20px;color:#666">Bu kategori boş.</div>'}
+      <button class="btn" style="margin-top:20px" data-action="add-bookmark">+ Add Bookmark</button>
+    `;
+    this.$('#contentArea').innerHTML = html;
+  }
+
+  getTileHTML(item) {
+    const favicon = item.icon ? `<img src="${item.icon}" onerror="this.parentElement.innerHTML='${item.title[0]}'">` : this.getFavicon(item.url, item.title[0]);
+    return `<a href="${item.url}" target="_blank" class="grid-tile">${favicon}<div class="title">${item.title}</div></a>`;
+  }
+
+  getFavicon(url, fallback) {
     try {
-        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks });
-    } catch (error) {
-        console.error('Error saving:', error);
-        alert('Failed to save: ' + error.message);
-    }
-}
+      const domain = new URL(url).hostname;
+      const src = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      const fallbackSrc = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${domain}&size=64`;
+      return `<img src="${src}" onerror="this.onerror=null;this.src='${fallbackSrc}';" alt="">`;
+    } catch { return fallback; }
+  }
 
-// --- FAVICON ---
-function createFaviconHTML(item, defaultChar) {
-    if (item.icon) return `<img src="${item.icon}" alt="" onerror="this.parentElement.innerHTML = '${defaultChar}'">`;
-    let hostname = '';
-    try { hostname = new URL(item.url).hostname; } catch (e) {}
-    if (hostname) {
-        const primarySrc = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
-        const fallbackSrc = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${hostname}&size=64`;
-        return `<img src="${primarySrc}" alt="" onerror="this.onerror=null; this.src='${fallbackSrc}';">`;
-    }
-    return defaultChar;
-}
+  goHome() { this.state.currentView = 'home'; this.render(); }
 
-// --- CATEGORIES ---
-function renderCategories() {
-    const el = $('#categories');
-    el.innerHTML = '';
-    BOOKMARKS.forEach(cat => {
-        const div = document.createElement('div');
-        div.className = 'category' + (cat.id === currentView ? ' active' : '');
-        div.dataset.id = cat.id;
-        div.innerHTML = `<div class="cat-icon">${cat.title.charAt(0).toUpperCase()}</div><div class="cat-name">${cat.title}</div><button class="icon-btn edit-cat">Edit</button><button class="icon-btn delete-cat">Delete</button>`;
-        el.appendChild(div);
+  setupEventDelegation() {
+    document.addEventListener('click', e => {
+      const t = e.target;
+      if (t.matches('#loginBtn')) return signInWithPopup(auth, new GoogleAuthProvider());
+      if (t.matches('#miniSignOutBtn')) return signOut(auth);
+      if (t.matches('#homeBtn')) return this.goHome();
+      if (t.matches('#addCategoryBtn')) return this.openCategoryModal();
+      if (t.matches('[data-action="add-bookmark"]')) return this.openBookmarkModal();
+      if (t.matches('.category')) return this.handleCategoryClick(t.closest('.category'), e);
+      if (t.matches('.icon-btn.edit-cat')) return this.openCategoryEditModal(t.closest('.category').dataset.id);
+      if (t.matches('.icon-btn.delete-cat')) return this.deleteCategory(t.closest('.category').dataset.id);
+      if (t.matches('#saveBookmark')) return this.saveBookmark();
+      if (t.matches('#saveCategory')) return this.saveCategory();
+      if (t.matches('#saveCategoryEdit')) return this.saveCategoryEdit();
+      if (t.matches('[id^="cancel"]')) return t.closest('.modal').classList.remove('active');
     });
-}
 
-// --- RADIO WIDGET ---
-const stations = [
-  { name: "Max FM", frequency: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
-  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
-  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
-  { name: "Groove Salad", frequency: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
-  { name: "Space Station Soma", frequency: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
-  { name: "Lush", frequency: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
-  { name: "Drone Zone", frequency: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
-  { name: "Secret Agent", frequency: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
-];
-let currentStationIndex = 0;
-let isPlaying = false;
-let volume = 50;
-const audio = new Audio();
-audio.src = stations[currentStationIndex].url;
-audio.volume = volume / 100;
-audio.load();
-
-function updateRadioScreen() {
-  const s = stations[currentStationIndex];
-  $('#radioScreen').textContent = `${s.name} - ${s.frequency} MHz`;
-}
-
-function changeStation(direction) {
-  currentStationIndex = direction === "prev" 
-    ? (currentStationIndex - 1 + stations.length) % stations.length 
-    : (currentStationIndex + 1) % stations.length;
-  audio.src = stations[currentStationIndex].url;
-  updateRadioScreen();
-  if (isPlaying) startPlayback();
-}
-
-function togglePlayPause() {
-  isPlaying = !isPlaying;
-  $('#playPauseBtn').textContent = isPlaying ? 'Pause' : 'Play';
-  if (isPlaying) startPlayback();
-  else audio.pause();
-}
-
-function startPlayback() {
-  audio.play().catch(err => {
-    console.warn('Autoplay blocked:', err);
-    isPlaying = false;
-    $('#playPauseBtn').textContent = 'Play';
-  });
-}
-
-function changeVolume(dir) {
-  volume = dir === "up" ? Math.min(volume + 10, 100) : Math.max(volume - 10, 0);
-  audio.volume = volume / 100;
-  $('#volumeDisplay').textContent = `${volume}%`;
-}
-
-// Radio Events
-$('#prevStationBtn').onclick = () => changeStation("prev");
-$('#nextStationBtn').onclick = () => changeStation("next");
-$('#playPauseBtn').onclick = togglePlayPause;
-$('#volumeDownBtn').onclick = () => changeVolume("down");
-$('#volumeUpBtn').onclick = () => changeVolume("up");
-
-updateRadioScreen();
-
-// --- WEATHER ---
-const API_KEY = 'cd6435a221fb4a71881124700252110';
-const BASE_URL = 'https://api.weatherapi.com/v1';
-
-function getWeatherIcon(code, isDay) {
-    const icons = { 1000: isDay ? 'Sun' : 'Moon', 1003: 'Partly Cloudy', 1006: 'Cloud', 1009: 'Cloud', 1030: 'Fog', 1063: 'Rain', 1066: 'Snow', 1180: 'Rain', 1183: 'Rain', 1186: 'Rain', 1189: 'Rain', 1192: 'Heavy Rain', 1195: 'Heavy Rain', 1210: 'Snow', 1213: 'Snow', 1216: 'Snow', 1219: 'Snow', 1222: 'Snow', 1225: 'Snow', 1240: 'Rain', 1243: 'Heavy Rain', 1246: 'Heavy Rain', 1273: 'Thunder', 1276: 'Thunder' };
-    return icons[code] || 'Cloud';
-}
-
-function createWeatherAnimation(code, el) {
-    el.innerHTML = '';
-    if (code >= 1180 && code <= 1246) {
-        for (let i = 0; i < 30; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'rain-drop';
-            drop.style.left = Math.random() * 100 + '%';
-            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
-            drop.style.animationDelay = Math.random() * 2 + 's';
-            el.appendChild(drop);
-        }
-    } else if (code >= 1210 && code <= 1225) {
-        for (let i = 0; i < 20; i++) {
-            const flake = document.createElement('div');
-            flake.className = 'snow-flake';
-            flake.style.left = Math.random() * 100 + '%';
-            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            flake.style.animationDelay = Math.random() * 2 + 's';
-            el.appendChild(flake);
-        }
-    } else if (code === 1000) {
-        const rays = document.createElement('div');
-        rays.className = 'sun-rays';
-        rays.innerHTML = 'Sun';
-        el.appendChild(rays);
-    }
-}
-
-async function fetchWeatherData(district) {
-    try {
-        const response = await fetch(`${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(district + ', Ankara, Turkey')}&days=3&aqi=yes&lang=tr`);
-        if (!response.ok) throw new Error('Weather data failed');
-        return await response.json();
-    } catch (e) { console.error(e); return null; }
-}
-
-function updateWeather(data) {
-    if (!data) return;
-    const c = data.current;
-    const f = data.forecast.forecastday;
-
-    $('#currentTemp').textContent = Math.round(c.temp_c) + '°';
-    $('#weatherDesc').textContent = c.condition.text;
-    $('#mainIcon').textContent = getWeatherIcon(c.condition.code, c.is_day);
-    $('#humidity').textContent = c.humidity + '%';
-    $('#wind').textContent = c.wind_kph.toFixed(1) + ' km/s';
-    $('#rainChance').textContent = (f[0].day.daily_chance_of_rain || 0) + '%';
-    createWeatherAnimation(c.condition.code, $('#weatherAnimation'));
-
-    const hourly = $('#hourlyForecast');
-    const allHours = f.flatMap(d => d.hour);
-    const now = new Date().getHours();
-    const next12 = allHours.slice(now, now + 12);
-    hourly.innerHTML = next12.map(h => {
-        const t = new Date(h.time);
-        return `<div class="hour-card"><div class="hour-time">${t.getHours()}:00</div><div class="hour-icon">${getWeatherIcon(h.condition.code, h.is_day)}</div><div class="hour-temp">${Math.round(h.temp_c)}°</div><div class="hour-rain">Rain ${h.chance_of_rain}%</div></div>`;
-    }).join('');
-
-    const daily = $('#dailyForecast');
-    const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-    daily.innerHTML = f.map((d, i) => {
-        const date = new Date(d.date);
-        const name = i === 0 ? 'Bugün' : days[date.getDay()];
-        return `<div class="day-card"><div class="day-name">${name}</div><div class="day-icon">${getWeatherIcon(d.day.condition.code, 1)}</div><div class="day-temps"><span class="temp-max">${Math.round(d.day.maxtemp_c)}°</span><span class="temp-min">${Math.round(d.day.mintemp_c)}°</span></div><div class="day-rain">Rain ${d.day.daily_chance_of_rain}%</div></div>`;
-    }).join('');
-}
-
-async function initWeatherWidget() {
-    const h = $('#hourlyForecast'), d = $('#dailyForecast');
-    h.innerHTML = '<div class="loading">Yükleniyor...</div>';
-    d.innerHTML = '<div class="loading">Yükleniyor...</div>';
-    const data = await fetchWeatherData('Etimesgut');
-    if (data) updateWeather(data);
-
-    $('#districtSelect')?.addEventListener('change', async e => {
-        h.innerHTML = d.innerHTML = '<div class="loading">Yükleniyor...</div>';
-        const data = await fetchWeatherData(e.target.value);
-        if (data) updateWeather(data);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
     });
-}
+  }
 
-// --- RENDER HOME ---
-function renderHome() {
-    $('#pageTitle').textContent = 'Home';
-    $('#viewControls').style.display = 'none';
-    const homeItems = BOOKMARKS.flatMap(c => (c.items || []).filter(i => i.showHome));
-    const area = $('#contentArea');
-    area.innerHTML = '';
+  handleCategoryClick(el, e) {
+    if (e.target.closest('.edit-cat, .delete-cat')) return;
+    this.state.currentView = el.dataset.id;
+    this.render();
+  }
 
-    const container = document.createElement('div');
-    container.style.cssText = "display: flex; flex-direction: column; gap: 24px;";
+  openBookmarkModal(bookmarkId = null) {
+    const catId = this.state.currentView === 'home' ? null : this.state.currentView;
+    if (!catId && !bookmarkId) return alert('Kategori seçin.');
+    const bookmark = bookmarkId ? this.findBookmark(bookmarkId).bookmark : null;
+    this.$('#bookmarkModalTitle').textContent = bookmark ? 'Edit Bookmark' : 'Add Bookmark';
+    this.$('#bmTitle').value = bookmark?.title || '';
+    this.$('#bmUrl').value = bookmark?.url || '';
+    this.$('#bmIcon').value = bookmark?.icon || '';
+    this.$('#bmShowHome').checked = !!bookmark?.showHome;
+    this.populateCategorySelect('#bmCategory', bookmark ? this.findBookmark(bookmarkId).category.id : catId);
+    this.editing = { bookmarkId, categoryId: bookmark ? this.findBookmark(bookmarkId).category.id : catId };
+    this.$('#bookmarkModal').classList.add('active');
+  }
 
-    // Favorites
-    const favSec = document.createElement('div');
-    favSec.innerHTML = `<h2 style="font-size:18px;font-weight:700;margin-bottom:12px;color:#333;">Favori Bookmarklar</h2>`;
-    if (homeItems.length === 0) {
-        favSec.innerHTML += "<div style='padding:20px;color:#666'>Ana sayfaya eklenmiş yer imi yok.</div>";
+  saveBookmark() {
+    const title = this.$('#bmTitle').value.trim();
+    let url = this.$('#bmUrl').value.trim();
+    const catId = this.$('#bmCategory').value;
+    if (!title || !url || !catId) return alert('Tüm alanlar gerekli.');
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    const data = { title, url, icon: this.$('#bmIcon').value.trim() || undefined, showHome: this.$('#bmShowHome').checked };
+    const cat = this.state.bookmarks.find(c => c.id === catId);
+    if (this.editing.bookmarkId) {
+      const { bookmark, category } = this.findBookmark(this.editing.bookmarkId);
+      Object.assign(bookmark, data);
+      if (catId !== this.editing.categoryId) {
+        category.items = category.items.filter(i => i.id !== this.editing.bookmarkId);
+        cat.items.push(bookmark);
+      }
     } else {
-        const grid = document.createElement('div');
-        grid.className = 'content-grid';
-        homeItems.forEach(i => {
-            const a = document.createElement('a');
-            a.className = 'grid-tile';
-            a.href = i.url; a.target = '_blank';
-            a.innerHTML = `${createFaviconHTML(i, i.title.charAt(0).toUpperCase())}<div class="title">${i.title}</div>`;
-            grid.appendChild(a);
-        });
-        favSec.appendChild(grid);
+      cat.items.push({ id: 'b_' + Date.now(), ...data });
     }
-    container.appendChild(favSec);
+    this.state.currentView = catId;
+    this.$('#bookmarkModal').classList.remove('active');
+    this.save().then(() => this.render());
+  }
 
-    // Weather
-    const weatherSec = document.createElement('div');
-    weatherSec.innerHTML = `
-        <div class="widget-container">
-            <div class="widget-header" id="header">
-                <div class="weather-animation" id="weatherAnimation"></div>
-                <div class="district-selector">
-                    <select id="districtSelect">
-                        <option value="Etimesgut">Etimesgut</option>
-                        <option value="Çankaya">Çankaya</option>
-                        <option value="Keçiören">Keçiören</option>
-                        <option value="Mamak">Mamak</option>
-                        <option value="Yenimahalle">Yenimahalle</option>
-                        <option value="Altındağ">Altındağ</option>
-                        <option value="Sincan">Sincan</option>
-                        <option value="Pursaklar">Pursaklar</option>
-                        <option value="Gölbaşı">Gölbaşı</option>
-                        <option value="Polatlı">Polatlı</option>
-                        <option value="Ankara Merkez">Ankara Merkez</option>
-                    </select>
-                </div>
-                <div class="current-weather">
-                    <div><div class="current-temp" id="currentTemp">--°</div><div class="weather-desc" id="weatherDesc">Yükleniyor...</div></div>
-                    <div class="weather-icon-main" id="mainIcon">Cloud</div>
-                </div>
-                <div class="weather-details" id="weatherDetails">
-                    <div class="detail-item"><span class="detail-icon">Humidity</span><span id="humidity">--%</span></div>
-                    <div class="detail-item"><span class="detail-icon">Wind</span><span id="wind">-- km/s</span></div>
-                    <div class="detail-item"><span class="detail-icon">Rain</span><span id="rainChance">--%</span></div>
-                </div>
-                <div class="api-notice">WeatherAPI.com</div>
-            </div>
-            <div class="widget-body">
-                <div class="section-title">Saatlik</div>
-                <div class="hourly-forecast" id="hourlyForecast"><div class="loading">Yükleniyor...</div></div>
-                <div class="section-title">Günlük</div>
-                <div class="daily-forecast" id="dailyForecast"><div class="loading">Yükleniyor...</div></div>
-            </div>
-        </div>`;
-    container.appendChild(weatherSec);
-    area.appendChild(container);
-    setTimeout(initWeatherWidget, 100);
-}
+  openCategoryModal() {
+    this.$('#cTitle').value = '';
+    this.$('#categoryModal').classList.add('active');
+  }
 
-// --- RENDER CATEGORY (CARD ONLY) ---
-function renderCategory(catId) {
-    const cat = BOOKMARKS.find(c => c.id === catId);
-    if (!cat) { currentView = 'home'; renderApp(); return; }
-    $('#pageTitle').textContent = cat.title;
-    $('#viewControls').style.display = 'none';
+  saveCategory() {
+    const title = this.$('#cTitle').value.trim();
+    if (!title) return;
+    if (this.state.bookmarks.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert('Bu kategori zaten var.');
+    const min = this.state.bookmarks.length ? Math.min(...this.state.bookmarks.map(c => c.order ?? 0)) : 0;
+    this.state.bookmarks.unshift({ id: 'cat_' + Date.now(), title, order: min - 1, items: [] });
+    this.$('#categoryModal').classList.remove('active');
+    this.save().then(() => this.render());
+  }
 
-    const area = $('#contentArea');
-    area.innerHTML = '';
-    const items = cat.items || [];
+  openCategoryEditModal(id) {
+    const cat = this.state.bookmarks.find(c => c.id === id);
+    this.$('#ceTitle').value = cat.title;
+    this.$('#ceOrder').value = cat.order ?? '';
+    this.editing.categoryId = id;
+    this.$('#categoryEditModal').classList.add('active');
+  }
 
-    const container = document.createElement('div');
-    if (items.length > 0) {
-        container.className = 'content-grid';
-        items.forEach(item => {
-            const a = document.createElement('a');
-            a.className = 'grid-tile';
-            a.href = item.url;
-            a.target = '_blank';
-            a.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class="title">${item.title}</div>`;
-            container.appendChild(a);
-        });
-    } else {
-        container.innerHTML = `<div style='padding:20px; color:#666'>Bu kategori boş.</div>`;
-    }
-    area.appendChild(container);
+  saveCategoryEdit() {
+    const title = this.$('#ceTitle').value.trim();
+    const order = parseInt(this.$('#ceOrder').value) || 999;
+    if (!title) return alert('Ad gerekli.');
+    const cat = this.state.bookmarks.find(c => c.id === this.editing.categoryId);
+    if (this.state.bookmarks.some(c => c.id !== cat.id && c.title.toLowerCase() === title.toLowerCase())) return alert('Bu isim zaten var.');
+    cat.title = title;
+    cat.order = order;
+    this.$('#categoryEditModal').classList.remove('active');
+    this.save().then(() => this.render());
+  }
 
-    const addBtn = document.createElement('button');
-    addBtn.textContent = '+ Add Bookmark';
-    addBtn.className = 'btn';
-    addBtn.style.marginTop = '20px';
-    area.appendChild(addBtn);
-}
+  deleteCategory(id) {
+    if (!confirm("Yer imleri 'Diğer' kategorisine taşınacak.")) return;
+    const cat = this.state.bookmarks.find(c => c.id === id);
+    let other = this.state.bookmarks.find(c => c.id === 'cat_other');
+    if (!other) { other = { id: 'cat_other', title: 'Diğer', order: 9999, items: [] }; this.state.bookmarks.push(other); }
+    if (cat.items?.length) other.items.push(...cat.items);
+    this.state.bookmarks = this.state.bookmarks.filter(c => c.id !== id);
+    if (this.state.currentView === id) this.goHome();
+    this.save().then(() => this.render());
+  }
 
-// --- MODALS ---
-function findBookmark(id) {
-    for (const cat of BOOKMARKS) {
-        const b = (cat.items || []).find(i => i.id === id);
-        if (b) return { bookmark: b, category: cat };
+  findBookmark(id) {
+    for (const cat of this.state.bookmarks) {
+      const b = cat.items.find(i => i.id === id);
+      if (b) return { bookmark: b, category: cat };
     }
     return { bookmark: null, category: null };
+  }
+
+  populateCategorySelect(sel, selected) {
+    const s = this.$(sel);
+    s.innerHTML = this.state.bookmarks.map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>${c.title}</option>`).join('');
+  }
+
+  getBookmarkModalHTML() {
+    return `
+      <div class="modal-card">
+        <h3 id="bookmarkModalTitle">Add Bookmark</h3>
+        <div class="form-group"><label>Title</label><input id="bmTitle" type="text"></div>
+        <div class="form-group"><label>URL</label><input id="bmUrl" type="text"></div>
+        <div class="form-group"><label>Category</label><select id="bmCategory"></select></div>
+        <div class="form-group"><label>Icon URL (optional)</label><input id="bmIcon" type="text"></div>
+        <div class="switch"><input type="checkbox" id="bmShowHome"><label for="bmShowHome">Show on Home</label></div>
+        <div class="modal-actions">
+          <button class="btn" id="cancelBookmark">Cancel</button>
+          <button class="btn" id="saveBookmark">Save</button>
+        </div>
+      </div>
+    `;
+  }
+
+  getCategoryModalHTML() {
+    return `
+      <div class="modal-card">
+        <h3>Add Category</h3>
+        <div class="form-group"><label>Category Name</label><input id="cTitle" type="text"></div>
+        <div class="modal-actions">
+          <button class="btn" id="cancelCategory">Cancel</button>
+          <button class="btn" id="saveCategory">Save</button>
+        </div>
+      </div>
+    `;
+  }
+
+  getCategoryEditModalHTML() {
+    return `
+      <div class="modal-card">
+        <h3>Edit Category</h3>
+        <div class="form-group"><label>Name</label><input id="ceTitle" type="text"></div>
+        <div class="form-group"><label>Order (lower = higher)</label><input id="ceOrder" type="number" min="0"></div>
+        <div class="modal-actions">
+          <button class="btn" id="cancelCategoryEdit">Cancel</button>
+          <button class="btn" id="saveCategoryEdit">Save</button>
+        </div>
+      </div>
+    `;
+  }
 }
 
-function populateCategorySelect(selected = null) {
-    const s = $('#mCategory');
-    s.innerHTML = '';
-    BOOKMARKS.forEach(c => s.innerHTML += `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${c.title}</option>`);
+// ==================== WIDGETS ====================
+
+class RadioWidget {
+  constructor(container) {
+    this.container = container;
+    this.stations = [
+      { name: "Max FM", freq: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
+      { name: "Radyo ODTÜ", freq: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
+      { name: "Radyo İlef", freq: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
+      { name: "Groove Salad", freq: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
+      { name: "Space Station", freq: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
+      { name: "Lush", freq: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
+      { name: "Drone Zone", freq: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
+      { name: "Secret Agent", freq: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" }
+    ];
+    this.idx = 0;
+    this.playing = false;
+    this.volume = 50;
+    this.audio = new Audio();
+    this.audio.src = this.stations[this.idx].url;
+    this.audio.volume = this.volume / 100;
+    this.audio.load();
+    this.render();
+    this.bindEvents();
+  }
+
+  render() {
+    const s = this.stations[this.idx];
+    this.container.innerHTML = `
+      <div id="radioScreen">${s.name} - ${s.freq} MHz</div>
+      <div class="radio-controls">
+        <button class="radio-btn" data-dir="prev">Previous</button>
+        <button class="radio-btn" id="playPauseBtn">Play</button>
+        <button class="radio-btn" data-dir="next">Next</button>
+      </div>
+      <div class="volume-controls">
+        <button class="volume-btn" data-vol="down">−</button>
+        <span id="volumeDisplay">${this.volume}%</span>
+        <button class="volume-btn" data-vol="up">+</button>
+      </div>
+    `;
+  }
+
+  bindEvents() {
+    this.container.addEventListener('click', e => {
+      const t = e.target;
+      if (t.matches('[data-dir]')) this.changeStation(t.dataset.dir);
+      if (t.matches('#playPauseBtn')) this.toggle();
+      if (t.matches('[data-vol]')) this.changeVolume(t.dataset.vol);
+    });
+  }
+
+  changeStation(dir) {
+    this.idx = dir === 'prev' ? (this.idx - 1 + this.stations.length) % this.stations.length : (this.idx + 1) % this.stations.length;
+    this.audio.src = this.stations[this.idx].url;
+    this.render();
+    if (this.playing) this.play();
+  }
+
+  toggle() {
+    this.playing = !this.playing;
+    this.container.querySelector('#playPauseBtn').textContent = this.playing ? 'Pause' : 'Play';
+    this.playing ? this.play() : this.audio.pause();
+  }
+
+  play() {
+    this.audio.play().catch(() => {
+      this.playing = false;
+      this.container.querySelector('#playPauseBtn').textContent = 'Play';
+    });
+  }
+
+  changeVolume(dir) {
+    this.volume = dir === 'up' ? Math.min(100, this.volume + 10) : Math.max(0, this.volume - 10);
+    this.audio.volume = this.volume / 100;
+    this.container.querySelector('#volumeDisplay').textContent = `${this.volume}%`;
+  }
 }
 
-function openModalForAdd() {
-    if (currentView === 'home') return alert("Lütfen bir kategori seçin.");
-    editingState = { bookmarkId: null, categoryId: currentView };
-    $('#modalTitle').textContent = "Add Bookmark";
-    $('#mTitle').value = ''; $('#mUrl').value = ''; $('#mIcon').value = ''; $('#mShowHome').checked = false;
-    populateCategorySelect(currentView);
-    $('#modal').classList.add('active');
-}
+class WeatherWidget {
+  constructor(container) {
+    this.container = container;
+    this.districts = ["Etimesgut", "Çankaya", "Keçiören", "Mamak", "Yenimahalle", "Altındağ", "Sincan", "Pursaklar", "Gölbaşı", "Polatlı", "Ankara Merkez"];
+    this.render();
+    this.loadWeather('Etimesgut');
+  }
 
-function openModalForEdit(id, catId) {
-    const { bookmark } = findBookmark(id);
-    if (!bookmark) return;
-    editingState = { bookmarkId: id, categoryId: catId };
-    $('#modalTitle').textContent = "Edit Bookmark";
-    $('#mTitle').value = bookmark.title;
-    $('#mUrl').value = bookmark.url;
-    $('#mIcon').value = bookmark.icon || '';
-    $('#mShowHome').checked = !!bookmark.showHome;
-    populateCategorySelect(catId);
-    $('#modal').classList.add('active');
-}
+  render() {
+    this.container.innerHTML = `
+      <div class="widget-container">
+        <div class="widget-header">
+          <div class="weather-animation" id="anim"></div>
+          <div class="district-selector">
+            <select id="distSelect">${this.districts.map(d => `<option>${d}</option>`).join('')}</select>
+          </div>
+          <div class="current-weather">
+            <div><div class="current-temp" id="temp">--°</div><div class="weather-desc" id="desc">Yükleniyor...</div></div>
+            <div class="weather-icon-main" id="icon">Cloud</div>
+          </div>
+          <div class="weather-details">
+            <div class="detail-item"><span class="detail-icon">Humidity</span><span id="hum">--%</span></div>
+            <div class="detail-item"><span class="detail-icon">Wind</span><span id="wind">-- km/s</span></div>
+            <div class="detail-item"><span class="detail-icon">Rain</span><span id="rain">--%</span></div>
+          </div>
+          <div class="api-notice">WeatherAPI.com</div>
+        </div>
+        <div class="widget-body">
+          <div class="section-title">Saatlik</div>
+          <div class="hourly-forecast" id="hourly"><div class="loading">Yükleniyor...</div></div>
+          <div class="section-title">Günlük</div>
+          <div class="daily-forecast" id="daily"><div class="loading">Yükleniyor...</div></div>
+        </div>
+      </div>
+    `;
+    this.container.querySelector('#distSelect').addEventListener('change', e => this.loadWeather(e.target.value));
+  }
 
-$('#saveModal').onclick = async () => {
-    const title = $('#mTitle').value.trim();
-    let url = $('#mUrl').value.trim();
-    const catId = $('#mCategory').value;
-    if (!title || !url || !catId) return alert("Başlık, URL ve Kategori gerekli.");
-    if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
-    const data = { title, url, icon: $('#mIcon').value.trim() || undefined, showHome: !!$('#mShowHome').checked };
-    const cat = BOOKMARKS.find(c => c.id === catId);
-    if (!cat) return alert("Geçersiz kategori.");
+  async loadWeather(district) {
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=cd6435a221fb4a71881124700252110&q=${encodeURIComponent(district + ', Ankara, Turkey')}&days=3&lang=tr`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      this.update(data);
+    } catch { this.container.querySelectorAll('#hourly, #daily').forEach(el => el.innerHTML = '<div class="error">Hata</div>'); }
+  }
 
-    if (editingState.bookmarkId) {
-        const { bookmark, category } = findBookmark(editingState.bookmarkId);
-        if (bookmark) {
-            Object.assign(bookmark, data);
-            if (catId !== editingState.categoryId) {
-                category.items = category.items.filter(i => i.id !== editingState.bookmarkId);
-                cat.items.push(bookmark);
-            }
-        }
-    } else {
-        cat.items = cat.items || [];
-        cat.items.push({ id: 'b_' + Date.now(), ...data });
+  update(data) {
+    const c = data.current, f = data.forecast.forecastday;
+    this.$('#temp').textContent = Math.round(c.temp_c) + '°';
+    this.$('#desc').textContent = c.condition.text;
+    this.$('#icon').textContent = this.icon(c.condition.code, c.is_day);
+    this.$('#hum').textContent = c.humidity + '%';
+    this.$('#wind').textContent = c.wind_kph.toFixed(1) + ' km/s';
+    this.$('#rain').textContent = (f[0].day.daily_chance_of_rain || 0) + '%';
+    this.animate(c.condition.code);
+
+    const now = new Date().getHours();
+    const hours = f.flatMap(d => d.hour).slice(now, now + 12);
+    this.$('#hourly').innerHTML = hours.map(h => {
+      const t = new Date(h.time);
+      return `<div class="hour-card"><div class="hour-time">${t.getHours()}:00</div><div class="hour-icon">${this.icon(h.condition.code, h.is_day)}</div><div class="hour-temp">${Math.round(h.temp_c)}°</div><div class="hour-rain">Rain ${h.chance_of_rain}%</div></div>`;
+    }).join('');
+
+    const days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+    this.$('#daily').innerHTML = f.map((d,i) => {
+      const date = new Date(d.date), name = i===0?'Bugün':days[date.getDay()];
+      return `<div class="day-card"><div class="day-name">${name}</div><div class="day-icon">${this.icon(d.day.condition.code,1)}</div><div class="day-temps"><span class="temp-max">${Math.round(d.day.maxtemp_c)}°</span><span class="temp-min">${Math.round(d.day.mintemp_c)}°</span></div><div class="day-rain">Rain ${d.day.daily_chance_of_rain}%</div></div>`;
+    }).join('');
+  }
+
+  $(s) { return this.container.querySelector(s); }
+
+  icon(code, day) {
+    const map = {1000: day?'Sun':'Moon',1003:'Partly Cloudy',1006:'Cloud',1009:'Cloud',1030:'Fog',1063:'Rain',1066:'Snow',1180:'Rain',1183:'Rain',1186:'Rain',1189:'Rain',1192:'Heavy Rain',1195:'Heavy Rain',1210:'Snow',1213:'Snow',1216:'Snow',1219:'Snow',1222:'Snow',1225:'Snow',1240:'Rain',1243:'Heavy Rain',1246:'Heavy Rain',1273:'Thunder',1276:'Thunder'};
+    return map[code] || 'Cloud';
+  }
+
+  animate(code) {
+    const el = this.$('#anim'); el.innerHTML = '';
+    if (code >= 1180 && code <= 1246) {
+      for (let i=0;i<30;i++) { const d=document.createElement('div'); d.className='rain-drop'; d.style.left=Math.random()*100+'%'; d.style.animationDuration=(Math.random()*0.5+0.5)+'s'; d.style.animationDelay=Math.random()*2+'s'; el.appendChild(d); }
+    } else if (code >= 1210 && code <= 1225) {
+      for (let i=0;i<20;i++) { const s=document.createElement('div'); s.className='snow-flake'; s.style.left=Math.random()*100+'%'; s.style.animationDuration=(Math.random()*3+2)+'s'; s.style.animationDelay=Math.random()*2+'s'; el.appendChild(s); }
+    } else if (code === 1000) {
+      const r=document.createElement('div'); r.className='sun-rays'; r.innerHTML='Sun'; el.appendChild(r);
     }
-    currentView = catId;
-    $('#modal').classList.remove('active');
-    await handleDataChange();
-};
-
-$('#saveCategory').onclick = () => {
-    const title = $('#cTitle').value.trim();
-    if (!title) return;
-    if (BOOKMARKS.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert(`"${title}" zaten var.`);
-    const minOrder = BOOKMARKS.length > 0 ? Math.min(...BOOKMARKS.map(c => c.order ?? 0)) : 0;
-    BOOKMARKS.unshift({ id: 'cat_' + Date.now(), title, order: minOrder - 1, items: [] });
-    $('#modalCategory').classList.remove('active');
-    handleDataChange();
-};
-
-function openCategoryEditModal(id) {
-    const cat = BOOKMARKS.find(c => c.id === id);
-    if (!cat) return;
-    editingState.categoryId = id;
-    $('#ceTitle').value = cat.title;
-    $('#ceOrder').value = cat.order ?? '';
-    $('#modalCategoryEdit').classList.add('active');
+  }
 }
 
-$('#saveCategoryEdit').onclick = () => {
-    const title = $('#ceTitle').value.trim();
-    const order = parseInt($('#ceOrder').value);
-    if (!title) return alert("Kategori adı gerekli.");
-    const id = editingState.categoryId;
-    const cat = BOOKMARKS.find(c => c.id === id);
-    if (cat) {
-        if (BOOKMARKS.some(c => c.id !== id && c.title.toLowerCase() === title.toLowerCase())) return alert(`"${title}" zaten var.`);
-        cat.title = title;
-        cat.order = isNaN(order) ? 999 : order;
-    }
-    $('#modalCategoryEdit').classList.remove('active');
-    handleDataChange();
-};
+// ==================== BAŞLAT ====================
+new App();
 
-// --- EVENTS ---
-$('#loginBtn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-$('#miniSignOutBtn').onclick = () => signOut(auth);
-$('#homeBtn').onclick = () => { currentView = 'home'; renderApp(); };
-$('#addCategoryBtn').onclick = () => { $('#cTitle').value = ''; $('#modalCategory').classList.add('active'); };
-$('#categories').onclick = e => {
-    const catEl = e.target.closest('.category');
-    if (!catEl) return;
-    const id = catEl.dataset.id;
-    if (e.target.closest('.edit-cat')) openCategoryEditModal(id);
-    else if (e.target.closest('.delete-cat')) {
-        if (!confirm("Yer imleri 'Diğer' kategorisine taşınacak.")) return;
-        const cat = BOOKMARKS.find(c => c.id === id);
-        let other = BOOKMARKS.find(c => c.id === 'cat_other');
-        if (!other) { other = { id: 'cat_other', title: 'Diğer', order: 9999, items: [] }; BOOKMARKS.push(other); }
-        if (cat.items?.length) other.items.push(...cat.items);
-        BOOKMARKS = BOOKMARKS.filter(c => c.id !== id);
-        if (currentView === id) currentView = 'home';
-        handleDataChange();
-    } else {
-        currentView = id; renderApp();
-    }
-};
-
-$('#contentArea').onclick = e => {
-    const btn = e.target.closest('.btn');
-    if (btn && btn.textContent.includes('+ Add Bookmark')) return openModalForAdd();
-};
-
-// Close modals
-['#cancelModal', '#cancelCategory', '#cancelCategoryEdit'].forEach(s => $(s).onclick = () => $(s).closest('.modal').classList.remove('active'));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') ['#modal', '#modalCategory', '#modalCategoryEdit'].forEach(s => $(s)?.classList.remove('active')); });
-
-renderApp();
 </script>
 </body>
 </html>
