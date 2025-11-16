@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hava Durumu</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:transparent;}
+.widget-container{
+  background:rgba(255,255,255,.95);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.2);
+  overflow:visible;backdrop-filter:blur(10px);display:flex;flex-direction:row;height:auto;min-height:200px;
+}
+.widget-header{
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:15px;color:#fff;position:relative;overflow:hidden;
+  border-radius:20px 0 0 20px;flex:1;display:flex;flex-direction:column;justify-content:center;min-width:200px;
+}
+.weather-animation{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.rain-drop{position:absolute;width:2px;height:20px;background:linear-gradient(transparent,rgba(255,255,255,.6));animation:rain-fall linear infinite;}
+@keyframes rain-fall{to{transform:translateY(200px);}}
+.snow-flake{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;animation:snow-fall linear infinite;}
+@keyframes snow-fall{to{transform:translateY(200px) rotate(360deg);}}
+.sun-rays{position:absolute;top:50%;right:20px;width:60px;height:60px;animation:rotate 20s linear infinite;font-size:40px;}
+@keyframes rotate{to{transform:rotate(360deg);}}
+.district-selector{position:relative;z-index:10;margin-bottom:10px;}
+.district-selector select{width:100%;padding:6px 12px;border:none;border-radius:10px;font-size:12px;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;outline:none;}
+.current-weather{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.current-temp{font-size:36px;font-weight:bold;}
+.weather-icon-main{font-size:40px;}
+.weather-desc{font-size:12px;margin-top:5px;text-align:center;}
+.weather-details{display:flex;gap:10px;position:relative;z-index:10;flex-wrap:wrap;justify-content:center;}
+.detail-item{display:flex;align-items:center;gap:4px;font-size:11px;}
+.detail-icon{font-size:14px;}
+.api-notice{background:rgba(255,255,255,.2);padding:5px;border-radius:5px;font-size:8px;margin-top:5px;text-align:center;}
+.widget-body{padding:15px;flex:2;display:flex;flex-direction:column;overflow:hidden;border-radius:0 20px 20px 0;}
+.section-title{font-size:14px;font-weight:bold;color:#333;margin-bottom:10px;}
+.hourly-forecast{display:flex;gap:8px;overflow-x:auto;padding:5px 0;margin-bottom:10px;flex:1;}
+.hourly-forecast::-webkit-scrollbar{height:4px;}
+.hourly-forecast::-webkit-scrollbar-track{background:#f1f1f1;border-radius:10px;}
+.hourly-forecast::-webkit-scrollbar-thumb{background:#667eea;border-radius:10px;}
+.hour-card{min-width:60px;background:var(--bg);border-radius:10px;padding:8px;text-align:center;color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .3s;flex-shrink:0;}
+.hour-card:hover{transform:translateY(-2px);}
+.hour-time{font-size:10px;margin-bottom:2px;opacity:.9;}
+.hour-icon{font-size:20px;margin:2px 0;}
+.hour-temp{font-size:14px;font-weight:bold;}
+.hour-rain{font-size:8px;margin-top:2px;opacity:.8;}
+.daily-forecast{display:flex;gap:8px;overflow-x:auto;padding:5px 0;}
+.day-card{min-width:80px;background:linear-gradient(135deg,rgba(102,126,234,.1) 0%,rgba(118,75,162,.1) 100%);
+  border-radius:10px;padding:10px;text-align:center;transition:all .3s;border:1px solid transparent;flex-shrink:0;}
+.day-card:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 4px 12px rgba(102,126,234,.2);}
+.day-name{font-weight:bold;color:#667eea;margin-bottom:5px;font-size:11px;}
+.day-icon{font-size:24px;margin:5px 0;}
+.day-temps{display:flex;justify-content:center;gap:4px;font-size:12px;color:#333;}
+.temp-max{font-weight:bold;}
+.temp-min{opacity:.6;}
+.day-rain{font-size:8px;margin-top:3px;opacity:.8;}
+.loading,.error{text-align:center;padding:10px;font-size:12px;}
+.loading{color:#667eea;}
+.error{color:#e74c3c;}
+</style>
+</head>
+<body>
+<div class="widget-container">
+  <div class="widget-header">
+    <div class="weather-animation" id="weatherAnimation"></div>
+    <div class="district-selector">
+      <select id="districtSelect">
+        <option value="Etimesgut">Etimesgut</option>
+        <option value="Çankaya">Çankaya</option>
+        <option value="Keçiören">Keçiören</option>
+        <option value="Mamak">Mamak</option>
+        <option value="Yenimahalle">Yenimahalle</option>
+        <option value="Altındağ">Altındağ</option>
+        <option value="Sincan">Sincan</option>
+        <option value="Pursaklar">Pursaklar</option>
+        <option value="Gölbaşı">Gölbaşı</option>
+        <option value="Polatlı">Polatlı</option>
+        <option value="Ankara Merkez">Ankara Merkez</option>
+      </select>
+    </div>
+    <div class="current-weather">
+      <div><div class="current-temp" id="currentTemp">--°</div><div class="weather-desc" id="weatherDesc">Yükleniyor...</div></div>
+      <div class="weather-icon-main" id="mainIcon">Cloud</div>
+    </div>
+    <div class="weather-details">
+      <div class="detail-item"><span class="detail-icon">Humidity</span><span id="humidity">--%</span></div>
+      <div class="detail-item"><span class="detail-icon">Wind</span><span id="wind">-- km/s</span></div>
+      <div class="detail-item"><span class="detail-icon">Rain</span><span id="rainChance">--%</span></div>
+    </div>
+    <div class="api-notice">WeatherAPI.com – Gerçek veri</div>
+  </div>
+  <div class="widget-body">
+    <div class="section-title">Saatlik</div>
+    <div class="hourly-forecast" id="hourlyForecast"><div class="loading">Yükleniyor...</div></div>
+    <div class="section-title">Günlük</div>
+    <div class="daily-forecast" id="dailyForecast"><div class="loading">Yükleniyor...</div></div>
+  </div>
+</div>
+
+<script>
+const API_KEY='cd6435a221fb4a71881124700252110',BASE='https://api.weatherapi.com/v1';
+function icon(code,day){const m={1000:day?'Sunny':'Moon',1003:'Partly cloudy',1006:'Cloudy',1009:'Cloudy',1030:'Fog',1063:'Rain',1066:'Snow',1180:'Rain',1183:'Rain',1186:'Rain',1189:'Rain',1192:'Thunderstorm',1195:'Thunderstorm',1210:'Snow',1213:'Snow',1216:'Snow',1219:'Snow',1222:'Snow',1225:'Snow',1240:'Rain',1243:'Thunderstorm',1246:'Thunderstorm',1273:'Thunderstorm',1276:'Thunderstorm'};return m[code]||'Cloud';}
+function anim(code,el){
+  el.innerHTML='';
+  if(code>=1180&&code<=1246){for(let i=0;i<30;i++){const d=document.createElement('div');d.className='rain-drop';d.style.left=Math.random()*100+'%';d.style.animationDuration=(Math.random()*0.5+0.5)+'s';d.style.animationDelay=Math.random()*2+'s';el.appendChild(d);}}
+  else if(code>=1210&&code<=1225){for(let i=0;i<20;i++){const f=document.createElement('div');f.className='snow-flake';f.style.left=Math.random()*100+'%';f.style.animationDuration=(Math.random()*3+2)+'s';f.style.animationDelay=Math.random()*2+'s';el.appendChild(f);}}
+  else if(code===1000){const r=document.createElement('div');r.className='sun-rays';r.innerHTML='Sun';el.appendChild(r);}
+}
+async function fetchData(dist){
+  try{
+    const loc=`${dist}, Ankara, Turkey`;
+    const r=await fetch(`${BASE}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(loc)}&days=3&aqi=yes&lang=tr`);
+    if(!r.ok)throw new Error('Veri alınamadı');
+    return await r.json();
+  }catch(e){console.error(e);return null;}
+}
+function update(data){
+  if(!data)return;
+  const c=data.current,f=data.forecast.forecastday;
+  $('#currentTemp').textContent=Math.round(c.temp_c)+'°';
+  $('#weatherDesc').textContent=c.condition.text;
+  $('#mainIcon').textContent=icon(c.condition.code,c.is_day);
+  $('#humidity').textContent=c.humidity+'%';
+  $('#wind').textContent=c.wind_kph.toFixed(1)+' km/s';
+  $('#rainChance').textContent=(f[0].day.daily_chance_of_rain||0)+'%';
+  anim(c.condition.code,$('#weatherAnimation'));
+
+  const all=[],now=new Date(),curH=now.getHours();
+  f.forEach(d=>all.push(...d.hour));
+  const next12=all.slice(curH,curH+12);
+  $('#hourlyForecast').innerHTML=next12.map(h=>{
+    const t=new Date(h.time);
+    return `<div class="hour-card"><div class="hour-time">${t.getHours()}:00</div><div class="hour-icon">${icon(h.condition.code,h.is_day)}</div><div class="hour-temp">${Math.round(h.temp_c)}°</div><div class="hour-rain">Rain ${h.chance_of_rain}%</div></div>`;
+  }).join('');
+
+  const days=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  $('#dailyForecast').innerHTML=f.map((d,i)=>{
+    const dt=new Date(d.date),dn=i===0?'Bugün':days[dt.getDay()];
+    return `<div class="day-card"><div class="day-name">${dn}</div><div class="day-icon">${icon(d.day.condition.code,1)}</div><div class="day-temps"><span class="temp-max">${Math.round(d.day.maxtemp_c)}°</span><span class="temp-min">${Math.round(d.day.mintemp_c)}°</span></div><div class="day-rain">Rain ${d.day.daily_chance_of_rain}%</div></div>`;
+  }).join('');
+}
+async function init(){
+  const h=$('#hourlyForecast'),d=$('#dailyForecast');
+  h.innerHTML='<div class="loading">Yükleniyor...</div>';d.innerHTML='<div class="loading">Yükleniyor...</div>';
+  const data=await fetchData('Etimesgut');if(data)update(data);
+  $('#districtSelect').onchange=async e=>{
+    h.innerHTML='<div class="loading">Yükleniyor...</div>';d.innerHTML='<div class="loading">Yükleniyor...</div>';
+    const data=await fetchData(e.target.value);if(data)update(data);
+  };
+}
+const $=s=>document.querySelector(s);
+init();
+</script>
+</body
