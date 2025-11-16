@@ -51,25 +51,6 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 .category:hover .delete-cat, .category:hover .edit-cat{ display:grid; }
 #homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius:20px; background:rgba(255,255,255,0.1); color:#ffffff; }
 #homeBtn svg { width: 22px; height: 22px; }
-
-/* Radio Widget Styles (Sadece görsel için korundu) */
-#radioWidget {
-  background: rgba(255,255,255,0.1);
-  border-radius: 15px;
-  padding: 15px;
-  margin-top: 10px;
-  text-align: center;
-}
-#radioScreen {
-  background: #000; color: #00ff00; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.9rem; font-family: 'Courier New', monospace;
-}
-.radio-controls, .volume-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.radio-btn { background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 6px 12px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-.radio-btn:hover { background: rgba(255,255,255,0.3); }
-.volume-btn { background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
-.volume-btn:hover { background: rgba(255,255,255,0.3); }
-#playPauseBtn { background: rgba(0,255,0,0.3); font-size: 1.3rem; }
-#playPauseBtn:hover { background: rgba(0,255,0,0.4); }
 </style>
 </head>
 <body>
@@ -94,21 +75,6 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     </button>
     <button class="btn" id="addCategoryBtn" style="display:none;">+ Add Category</button>
     <div class="categories" id="categories"></div>
-
-    <!-- Radio Widget (Sadece görsel için korundu, işlevsiz) -->
-    <div id="radioWidget">
-      <div id="radioScreen">Radyo - İstasyon Seçin</div>
-      <div class="radio-controls">
-        <button class="radio-btn" id="prevStationBtn">◀</button>
-        <button class="radio-btn" id="playPauseBtn">▶</button>
-        <button class="radio-btn" id="nextStationBtn">▶</button>
-      </div>
-      <div class="volume-controls">
-        <button class="volume-btn" id="volumeDownBtn">−</button>
-        <span id="volumeDisplay">50%</span>
-        <button class="volume-btn" id="volumeUpBtn">+</button>
-      </div>
-    </div>
   </aside>
 
   <main class="main" id="main">
@@ -180,7 +146,7 @@ const auth = getAuth();
 // --- STATE MANAGEMENT ---
 let BOOKMARKS = [];
 let currentUser = null;
-let currentView = 'home'; // 'home' or a category ID
+let currentView = 'home';
 let editingState = { bookmarkId: null, categoryId: null };
 
 const $ = (selector) => document.querySelector(selector);
@@ -290,20 +256,9 @@ function renderHome() {
     $('#pageTitle').textContent = 'Home';
     const homeItems = BOOKMARKS.flatMap(c => (c.items || []).filter(i => i.showHome));
     const contentArea = $('#contentArea');
-    contentArea.innerHTML = '';
-
-    const homeContainer = document.createElement('div');
-    homeContainer.style.cssText = "display: flex; flex-direction: column; gap: 24px;";
-
-    // Favori Bookmarklar
-    const favoritesSection = document.createElement('div');
-    const favoritesHeader = document.createElement('h2');
-    favoritesHeader.textContent = 'Favori Bookmarklar';
-    favoritesHeader.style.cssText = "font-size: 18px; font-weight: 700; margin-bottom: 12px; color:#333;";
-    favoritesSection.appendChild(favoritesHeader);
 
     if (homeItems.length === 0) {
-        favoritesSection.innerHTML += "<div style='padding:20px; color:#666'>Ana Sayfaya eklenmiş yer imi bulunmuyor.</div>";
+        contentArea.innerHTML = "<div style='padding:20px; color:#666'>Ana Sayfaya eklenmiş yer imi bulunmuyor.</div>";
     } else {
         const grid = document.createElement('div');
         grid.className = 'content-grid';
@@ -315,16 +270,9 @@ function renderHome() {
             tile.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class='title'>${item.title}</div>`;
             grid.appendChild(tile);
         });
-        favoritesSection.appendChild(grid);
+        contentArea.innerHTML = '';
+        contentArea.appendChild(grid);
     }
-    homeContainer.appendChild(favoritesSection);
-
-    // Hava Durumu Widget (Yapı, harici betiğe işaret eder)
-    const weatherSection = document.createElement('div');
-    weatherSection.innerHTML = `<div style='padding:20px; color:#666'>Hava Durumu Widget'ı (Ayrı bir dosyada)</div>`;
-    homeContainer.appendChild(weatherSection);
-    
-    contentArea.appendChild(homeContainer);
 }
 
 function renderCategory(catId) {
