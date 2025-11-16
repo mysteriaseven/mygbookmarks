@@ -3,206 +3,564 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Radio Widget</title>
+<title>Weather Widget</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 /* Base Styles */
 :root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family:'Inter',sans-serif; }
-html,body{margin:0;height:100%;background:var(--bg);color:#ffffff; display:flex; align-items:center; justify-content:center; padding: 20px;}
+html,body{margin:0;height:100%;background:var(--bg);color:#333; display:flex; align-items:center; justify-content:center; padding: 20px;}
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Radio Widget Styles */
-.widget-wrapper {
-    max-width: 300px;
+/* Weather Styles - Horizontal Layout */
+.widget-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px; /* Standalone için genişlik eklendi */
     width: 100%;
+    overflow: visible;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    min-height: 200px;
 }
 
-#radioWidget {
-  background: rgba(255,255,255,0.1);
-  border-radius: 15px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.widget-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px 0 0 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 200px;
 }
 
-#radioScreen {
-  background: #000;
-  color: #00ff00;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 0.9rem;
-  font-family: 'Courier New', monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.weather-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-.radio-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+.rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
+    animation: rain-fall linear infinite;
 }
 
-.radio-btn {
-  background: rgba(255,255,255,0.2);
-  color: #ffffff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.1rem;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
+@keyframes rain-fall {
+    to { transform: translateY(200px); }
 }
 
-.radio-btn:hover {
-  background: rgba(255,255,255,0.3);
+.snow-flake {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    animation: snow-fall linear infinite;
 }
 
-.volume-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  padding: 0 10px;
+@keyframes snow-fall {
+    to { transform: translateY(200px) rotate(360deg); }
 }
 
-.volume-btn {
-  background: rgba(255,255,255,0.2);
-  color: #ffffff;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
+.sun-rays {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    animation: rotate 20s linear infinite;
+    font-size: 40px;
 }
 
-.volume-btn:hover {
-  background: rgba(255,255,255,0.3);
+@keyframes rotate {
+    to { transform: rotate(360deg); }
 }
 
-#playPauseBtn {
-  background: rgba(0,255,0,0.3);
-  font-size: 1.3rem;
-  width: 60px;
-  height: 60px;
+.district-selector {
+    position: relative;
+    z-index: 10;
+    margin-bottom: 10px;
 }
 
-#playPauseBtn:hover {
-  background: rgba(0,255,0,0.4);
+.district-selector select {
+    width: 100%;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.district-selector select option {
+    background: #667eea;
+    color: white;
+}
+
+.current-weather {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.current-temp {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.weather-icon-main {
+    font-size: 40px;
+}
+
+.weather-desc {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.weather-details {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    z-index: 10;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+}
+
+.detail-icon {
+    font-size: 14px;
+}
+
+.api-notice {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 8px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.widget-body {
+    padding: 15px;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 0 20px 20px 0;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.hourly-forecast {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    flex: 1;
+}
+
+.hourly-forecast::-webkit-scrollbar {
+    height: 4px;
+}
+
+.hourly-forecast::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.hourly-forecast::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.hour-card {
+    min-width: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    padding: 8px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+}
+
+.hour-card:hover {
+    transform: translateY(-2px);
+}
+
+.hour-time {
+    font-size: 10px;
+    margin-bottom: 2px;
+    opacity: 0.9;
+}
+
+.hour-icon {
+    font-size: 20px;
+    margin: 2px 0;
+}
+
+.hour-temp {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.hour-rain {
+    font-size: 8px;
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+.daily-forecast {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+.day-card {
+    min-width: 80px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    flex-shrink: 0;
+}
+
+.day-card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.day-name {
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 5px;
+    font-size: 11px;
+}
+
+.day-icon {
+    font-size: 24px;
+    margin: 5px 0;
+}
+
+.day-temps {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #333;
+}
+
+.temp-max {
+    font-weight: bold;
+}
+
+.temp-min {
+    opacity: 0.6;
+}
+
+.day-rain {
+    font-size: 8px;
+    margin-top: 3px;
+    opacity: 0.8;
+}
+
+.loading {
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #667eea;
+}
+
+.error {
+    text-align: center;
+    padding: 10px;
+    color: #e74c3c;
 }
 </style>
 </head>
 <body>
 
-<div class="widget-wrapper">
-    <div id="radioWidget">
-      <div id="radioScreen">Radyo - İstasyon Seçin</div>
-      <div class="radio-controls">
-        <button class="radio-btn" id="prevStationBtn">⏮</button>
-        <button class="radio-btn" id="playPauseBtn">▶</button>
-        <button class="radio-btn" id="nextStationBtn">⏭</button>
-      </div>
-      <div class="volume-controls">
-        <button class="volume-btn" id="volumeDownBtn">🔉</button>
-        <span id="volumeDisplay">50%</span>
-        <button class="volume-btn" id="volumeUpBtn">🔊</button>
-      </div>
+    <div class="widget-container">
+        <div class="widget-header" id="header">
+            <div class="weather-animation" id="weatherAnimation"></div>
+            <div class="district-selector">
+                <select id="districtSelect">
+                    <option value="Etimesgut">Etimesgut</option>
+                    <option value="Çankaya">Çankaya</option>
+                    <option value="Keçiören">Keçiören</option>
+                    <option value="Mamak">Mamak</option>
+                    <option value="Yenimahalle">Yenimahalle</option>
+                    <option value="Altındağ">Altındağ</option>
+                    <option value="Sincan">Sincan</option>
+                    <option value="Pursaklar">Pursaklar</option>
+                    <option value="Gölbaşı">Gölbaşı</option>
+                    <option value="Polatlı">Polatlı</option>
+                    <option value="Ankara Merkez">Ankara Merkez</option>
+                </select>
+            </div>
+            <div class="current-weather">
+                <div>
+                    <div class="current-temp" id="currentTemp">--°</div>
+                    <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
+                </div>
+                <div class="weather-icon-main" id="mainIcon">Cloud</div>
+            </div>
+            <div class="weather-details" id="weatherDetails">
+                <div class="detail-item">
+                    <span class="detail-icon">Humidity</span>
+                    <span id="humidity">--%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">Wind</span>
+                    <span id="wind">-- km/s</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">Rain</span>
+                    <span id="rainChance">--%</span>
+                </div>
+            </div>
+            <div class="api-notice" id="apiNotice">
+                WeatherAPI.com - Gerçek hava durumu verileri
+            </div>
+        </div>
+        <div class="widget-body">
+            <div class="section-title">Saatlik</div>
+            <div class="hourly-forecast" id="hourlyForecast">
+                <div class="loading">Yükleniyor...</div>
+            </div>
+            <div class="section-title">Günlük</div>
+            <div class="daily-forecast" id="dailyForecast">
+                <div class="loading">Yükleniyor...</div>
+            </div>
+        </div>
     </div>
-</div>
 
 <script>
-// Kısa bir sorgu fonksiyonu
-const $ = (selector) => document.querySelector(selector);
+const API_KEY = 'cd6435a221fb4a71881124700252110';
+const BASE_URL = 'https://api.weatherapi.com/v1';
 
-// --- RADIO WIDGET LOGIC ---
-const stations = [
-  { name: "Max FM", frequency: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
-  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
-  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
-  { name: "Groove Salad", frequency: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
-  { name: "Space Station Soma", frequency: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
-  { name: "Lush", frequency: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
-  { name: "Drone Zone", frequency: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
-  { name: "Secret Agent", frequency: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
-];
-
-let currentStationIndex = 0;
-let isPlaying = false;
-let volume = 50;
-const audio = new Audio();
-audio.volume = volume / 100;
-
-// İlk yüklemede CORS/autoplay hatasını önlemek için etkileşim bayrağı
-let hasUserInteracted = false;
-
-function updateRadioScreen() {
-  const station = stations[currentStationIndex];
-  const freq = station.frequency === "Online" ? "Online" : `${station.frequency} MHz`;
-  $('#radioScreen').textContent = `${station.name} - ${freq}`;
+function getWeatherIcon(code, isDay) {
+    // Ikon isimleri (mevcut CSS ile uyumlu olmalıdır)
+    const icons = {
+        1000: isDay ? '☀️' : '🌙', // Clear
+        1003: '🌤️', // Partly cloudy
+        1006: '☁️', // Cloudy
+        1009: '☁️', // Overcast
+        1030: '🌫️', // Mist
+        1063: '🌧️', // Patchy rain possible
+        1066: '🌨️', // Patchy snow possible
+        1180: '🌧️', // Patchy light rain
+        1183: '🌧️', // Light rain
+        1186: '🌧️', // Moderate rain
+        1189: '🌧️', // Moderate rain
+        1192: '⛈️', // Heavy rain
+        1195: '⛈️', // Heavy rain
+        1210: '🌨️', // Patchy light snow
+        1213: '🌨️', // Light snow
+        1216: '🌨️', // Patchy moderate snow
+        1219: '🌨️', // Moderate snow
+        1222: '🌨️', // Patchy heavy snow
+        1225: '🌨️', // Heavy snow
+        1240: '🌧️', // Light rain shower
+        1243: '⛈️', // Moderate or heavy rain shower
+        1246: '⛈️', // Torrential rain shower
+        1273: '⛈️', // Patchy light rain with thunder
+        1276: '⛈️', // Moderate or heavy rain with thunder
+    };
+    // CSS'deki kelimelerle eşleşmesi için (örneğin 'Cloud') güncellendi
+    const iconMap = {
+        1000: isDay ? 'Sun' : 'Moon', // Clear
+        1003: 'Partly cloudy', // Partly cloudy
+        1006: 'Cloudy', // Cloudy
+        1009: 'Cloudy', // Overcast
+        1030: 'Fog', // Mist
+        1063: 'Rain', // Patchy rain possible
+        1066: 'Snow', // Patchy snow possible
+        1180: 'Rain', // Patchy light rain
+        1183: 'Rain', // Light rain
+        1186: 'Rain', // Moderate rain
+        1189: 'Rain', // Moderate rain
+        1192: 'Thunderstorm', // Heavy rain
+        1195: 'Thunderstorm', // Heavy rain
+        1210: 'Snow', // Patchy light snow
+        1213: 'Snow', // Light snow
+        1216: 'Snow', // Patchy moderate snow
+        1219: 'Snow', // Moderate snow
+        1222: 'Snow', // Patchy heavy snow
+        1225: 'Snow', // Heavy snow
+        1240: 'Rain', // Light rain shower
+        1243: 'Thunderstorm', // Moderate or heavy rain shower
+        1246: 'Thunderstorm', // Torrential rain shower
+        1273: 'Thunderstorm', // Patchy light rain with thunder
+        1276: 'Thunderstorm', // Moderate or heavy rain with thunder
+    };
+    return iconMap[code] || 'Cloud';
 }
 
-function loadAndPlay() {
-  const station = stations[currentStationIndex];
-  audio.src = station.url;
-  audio.load();
-  if (isPlaying && hasUserInteracted) {
-    // Sesi oynatmaya çalışırken oluşabilecek hataları yakala (örneğin autoplay engellemesi)
-    audio.play().catch(err => {
-      console.error("Ses oynatılamadı (Autoplay engellendi veya CORS hatası):", err);
-      isPlaying = false;
-      $('#playPauseBtn').textContent = '▶';
-    });
-  }
+function createWeatherAnimation(code, animationEl) {
+    animationEl.innerHTML = '';
+    
+    if (code >= 1180 && code <= 1246) {
+        for (let i = 0; i < 30; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            animationEl.appendChild(drop);
+        }
+    }
+    else if (code >= 1210 && code <= 1225) {
+        for (let i = 0; i < 20; i++) {
+            const flake = document.createElement('div');
+            flake.className = 'snow-flake';
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            flake.style.animationDelay = Math.random() * 2 + 's';
+            animationEl.appendChild(flake);
+        }
+    }
+    else if (code === 1000) {
+        const rays = document.createElement('div');
+        rays.className = 'sun-rays';
+        // HTML'de 'Sun' kelimesiyle eşleşmesi için
+        rays.innerHTML = '☀️'; // Gerçek görsel için bu kullanılabilir, CSS'de Sun kelimesi vardı
+        animationEl.appendChild(rays);
+    }
 }
 
-function changeStation(direction) {
-  if (direction === "prev") {
-    currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
-  } else {
-    currentStationIndex = (currentStationIndex + 1) % stations.length;
-  }
-  updateRadioScreen();
-  loadAndPlay();
+async function fetchWeatherData(district) {
+    try {
+        const location = `${district}, Ankara, Turkey`;
+        const response = await fetch(
+            `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=yes&lang=tr`
+        );
+        if (!response.ok) throw new Error('Hava durumu verileri alınamadı');
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return null;
+    }
 }
 
-function togglePlayPause() {
-  hasUserInteracted = true;
-  isPlaying = !isPlaying;
-  const btn = $('#playPauseBtn');
-  btn.textContent = isPlaying ? '⏸' : '▶';
-  if (isPlaying) {
-    loadAndPlay();
-  } else {
-    audio.pause();
-  }
+function updateWeather(data) {
+    if (!data) return;
+
+    const current = data.current;
+    const forecast = data.forecast.forecastday;
+    
+    document.getElementById('currentTemp').textContent = Math.round(current.temp_c) + '°';
+    document.getElementById('weatherDesc').textContent = current.condition.text;
+    document.getElementById('mainIcon').textContent = getWeatherIcon(current.condition.code, current.is_day);
+    document.getElementById('humidity').textContent = current.humidity + '%';
+    document.getElementById('wind').textContent = current.wind_kph.toFixed(1) + ' km/s';
+    document.getElementById('rainChance').textContent = (forecast[0].day.daily_chance_of_rain || 0) + '%';
+    
+    createWeatherAnimation(current.condition.code, document.getElementById('weatherAnimation'));
+    
+    const hourlyDiv = document.getElementById('hourlyForecast');
+    const allHours = [];
+    forecast.forEach(day => allHours.push(...day.hour));
+    const now = new Date();
+    const currentHour = now.getHours();
+    // API 24 saatlik veriyi döndürdüğü için sonraki 12 saat hesaplandı.
+    const next12Hours = allHours.filter(hour => new Date(hour.time) > now).slice(0, 12);
+    
+    hourlyDiv.innerHTML = next12Hours.map(hour => {
+        const time = new Date(hour.time);
+        return `
+            <div class="hour-card">
+                <div class="hour-time">${time.getHours()}:00</div>
+                <div class="hour-icon">${getWeatherIcon(hour.condition.code, hour.is_day)}</div>
+                <div class="hour-temp">${Math.round(hour.temp_c)}°</div>
+                <div class="hour-rain">Rain ${hour.chance_of_rain}%</div>
+            </div>
+        `;
+    }).join('');
+    
+    const dailyDiv = document.getElementById('dailyForecast');
+    const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+    
+    dailyDiv.innerHTML = forecast.map((day, index) => {
+        const date = new Date(day.date);
+        const dayName = index === 0 ? 'Bugün' : days[date.getDay()];
+        return `
+            <div class="day-card">
+                <div class="day-name">${dayName}</div>
+                <div class="day-icon">${getWeatherIcon(day.day.condition.code, 1)}</div>
+                <div class="day-temps">
+                    <span class="temp-max">${Math.round(day.day.maxtemp_c)}°</span>
+                    <span class="temp-min">${Math.round(day.day.mintemp_c)}°</span>
+                </div>
+                <div class="day-rain">Rain ${day.day.daily_chance_of_rain}%</div>
+            </div>
+        `;
+    }).join('');
 }
 
-function changeVolume(direction) {
-  if (direction === "up") {
-    volume = Math.min(volume + 10, 100);
-  } else {
-    volume = Math.max(volume - 10, 0);
-  }
-  audio.volume = volume / 100;
-  $('#volumeDisplay').textContent = `${volume}%`;
+async function initWeatherWidget() {
+    const hourlyDiv = document.getElementById('hourlyForecast');
+    const dailyDiv = document.getElementById('dailyForecast');
+    if (hourlyDiv) hourlyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
+    if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
+    
+    // Başlangıçta Etimesgut verilerini yükle
+    let initialDistrict = localStorage.getItem('weatherDistrict') || 'Etimesgut';
+    const districtSelect = document.getElementById('districtSelect');
+    if (districtSelect) districtSelect.value = initialDistrict;
+    
+    const data = await fetchWeatherData(initialDistrict);
+    if (data) updateWeather(data);
+
+    if (districtSelect) {
+        districtSelect.addEventListener('change', async (e) => {
+            const newDistrict = e.target.value;
+            localStorage.setItem('weatherDistrict', newDistrict);
+            if (hourlyDiv) hourlyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
+            if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
+            const data = await fetchWeatherData(newDistrict);
+            if (data) updateWeather(data);
+        });
+    }
 }
 
-// Event Listeners for Radio
-$('#prevStationBtn').addEventListener('click', () => changeStation("prev"));
-$('#nextStationBtn').addEventListener('click', () => changeStation("next"));
-$('#playPauseBtn').addEventListener('click', togglePlayPause);
-$('#volumeDownBtn').addEventListener('click', () => changeVolume("down"));
-$('#volumeUpBtn').addEventListener('click', () => changeVolume("up"));
-
-// Initialize Radio
-updateRadioScreen();
+// Widget'ı başlat
+document.addEventListener('DOMContentLoaded', initWeatherWidget);
 </script>
 
 </body>
