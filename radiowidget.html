@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radyo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:transparent;}
+#radioWidget{background:rgba(255,255,255,.1);border-radius:15px;padding:15px;margin-top:10px;text-align:center;}
+#radioScreen{background:#000;color:#00ff00;padding:8px;border-radius:5px;margin-bottom:10px;font-size:.9rem;font-family:'Courier New',monospace;}
+.radio-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.radio-btn{background:rgba(255,255,255,.2);color:#fff;border:none;padding:6px 12px;border-radius:50%;cursor:pointer;font-size:1.1rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.radio-btn:hover{background:rgba(255,255,255,.3);}
+.volume-controls{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;}
+.volume-btn{background:rgba(255,255,255,.2);color:#fff;border:none;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:.9rem;}
+.volume-btn:hover{background:rgba(255,255,255,.3);}
+#playPauseBtn{background:rgba(0,255,0,.3);font-size:1.3rem;}
+#playPauseBtn:hover{background:rgba(0,255,0,.4);}
+</style>
+</head>
+<body>
+<div id="radioWidget">
+  <div id="radioScreen">Radyo - İstasyon Seçin</div>
+  <div class="radio-controls">
+    <button class="radio-btn" id="prevStationBtn">Prev</button>
+    <button class="radio-btn" id="playPauseBtn">Play</button>
+    <button class="radio-btn" id="nextStationBtn">Next</button>
+  </div>
+  <div class="volume-controls">
+    <button class="volume-btn" id="volumeDownBtn">−</button>
+    <span id="volumeDisplay">50%</span>
+    <button class="volume-btn" id="volumeUpBtn">+</button>
+  </div>
+</div>
+
+<script>
+const stations=[
+  {name:"Max FM",frequency:95.8,url:"https://maxfm.radyotvonline.net/stream/164/"},
+  {name:"Radyo ODTÜ",frequency:103.1,url:"https://stream.radyoodtu.com.tr/canli"},
+  {name:"Radyo İlef",frequency:91.0,url:"http://radyo.cc.ankara.edu.tr:8089/stream/1"},
+  {name:"Groove Salad",frequency:"Online",url:"https://ice5.somafm.com/groovesalad-128-mp3"},
+  {name:"Space Station Soma",frequency:"Online",url:"https://ice5.somafm.com/spacestation-128-mp3"},
+  {name:"Lush",frequency:"Online",url:"https://ice5.somafm.com/lush-128-mp3"},
+  {name:"Drone Zone",frequency:"Online",url:"https://ice5.somafm.com/dronezone-128-mp3"},
+  {name:"Secret Agent",frequency:"Online",url:"https://ice5.somafm.com/secretagent-128-mp3"}
+];
+let idx=0,playing=false,vol=50,interacted=false;
+const audio=new Audio();
+function scr(){$('#radioScreen').textContent=`${stations[idx].name} - ${stations[idx].frequency} MHz`;}
+function load(){audio.src=stations[idx].url;audio.load();}
+function play(){if(interacted){audio.play().catch(()=>{playing=false;$('#playPauseBtn').textContent='Play';});}}
+function change(dir){
+  idx=dir==="prev"?(idx-1+stations.length)%stations.length:(idx+1)%stations.length;
+  scr();load();if(playing)play();
+}
+function toggle(){
+  interacted=true;playing=!playing;
+  $('#playPauseBtn').textContent=playing?'Pause':'Play';
+  playing?play():audio.pause();
+}
+function volume(dir){
+  vol=dir==="up"?Math.min(vol+10,100):Math.max(vol-10,0);
+  audio.volume=vol/100;
+  $('#volumeDisplay').textContent=vol+'%';
+}
+$('#prevStationBtn').onclick=()=>change('prev');
+$('#nextStationBtn').onclick=()=>change('next');
+$('#playPauseBtn').onclick=toggle;
+$('#volumeDownBtn').onclick=()=>volume('down');
+$('#volumeUpBtn').onclick=()=>volume('up');
+scr();
+const $=s=>document.querySelector(s);
+</script>
+</body>
+</html>
