@@ -410,4 +410,70 @@ $('#saveCategoryEdit').onclick = () => {
         cat.title = title;
         cat.order = isNaN(order) ? 999 : order;
     }
-   
+    $('#modalCategoryEdit').classList.remove('active');
+    handleDataChange();
+};
+
+$('#saveCategory').onclick = () => {
+    const title = $('#cTitle').value.trim();
+    if (!title) return;
+    if (BOOKMARKS.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert(`Category "${title}" already exists.`);
+    const minOrder = BOOKMARKS.length > 0 ? Math.min(...BOOKMARKS.map(c => c.order ?? 0)) : 0;
+    BOOKMARKS.unshift({ id: 'cat_' + Date.now(), title, order: minOrder - 1, items: [] });
+    $('#modalCategory').classList.remove('active');
+    handleDataChange();
+};
+
+$('#loginBtn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => console.error("Sign in error", e));
+$('#miniSignOutBtn').onclick = () => signOut(auth);
+$('#homeBtn').onclick = () => { currentView = 'home'; renderApp(); };
+$('#addCategoryBtn').onclick = () => { $('#cTitle').value = ''; $('#modalCategory').classList.add('active'); };
+$('#listViewBtn').onclick = () => { viewMode = 'list'; renderApp(); };
+$('#cardViewBtn').onclick = () => { viewMode = 'card'; renderApp(); };
+
+$('#categories').addEventListener('click', e => {
+    const categoryEl = e.target.closest('.category');
+    if (!categoryEl) return;
+    const catId = categoryEl.dataset.id;
+    if (e.target.closest('.edit-cat')) openCategoryEditModal(catId);
+    else if (e.target.closest('.delete-cat')) {
+        if (!confirm("Bookmarks will be moved to 'Diğer' category.")) return;
+        const catToDelete = BOOKMARKS.find(c => c.id === catId);
+        if (!catToDelete) return;
+        let otherCat = BOOKMARKS.find(c => c.id === 'cat_other');
+        if (!otherCat) {
+            otherCat = { id: 'cat_other', title: 'Diğer', order: 9999, items: [] };
+            BOOKMARKS.push(otherCat);
+        }
+        if ((catToDelete.items || []).length > 0) {
+            otherCat.items = [...(otherCat.items || []), ...catToDelete.items];
+        }
+        BOOKMARKS = BOOKMARKS.filter(c => c.id !== catId);
+        if (currentView === catId) currentView = 'home';
+        handleDataChange();
+    } else {
+        currentView = catId; renderApp();
+    }
+});
+
+$('#contentArea').addEventListener('click', e => {
+    const addBtn = e.target.closest('.btn');
+    if (addBtn && addBtn.textContent.includes('+ Add Bookmark')) return openModalForAdd();
+    const card = e.target.closest('.card');
+    if (!card) return;
+    if (e.target.closest('.edit-btn')) openModalForEdit(card.dataset.id, card.dataset.categoryId);
+    else if (e.target.closest('.delete-btn')) {
+        if (!confirm("Are you sure?")) return;
+        const { category } = findBookmark(card.dataset.id);
+        if (category) category.items = (category.items || []).filter(i => i.id !== card.dataset.id);
+        handleDataChange();
+    }
+});
+
+[$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit')].forEach(m => m.classList.remove('active')); });
+
+renderApp();
+</script>
+</body>
+</html>
