@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v2.0</title>
+<title>My Bookmarks v1.9</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); --card:rgba(255, 255, 255, 0.95); --muted:#e0e6ff; --accent:#667eea; font-family:'Inter',sans-serif; }
@@ -13,7 +13,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:#ffffff;}
 #versionInfo {
     background: rgba(255, 255, 255, 0.2); color: #ffffff; padding: 3px 8px;
     border-radius: 8px; font-size: 12px; font-weight: 600;
-    align-self: flex-start; margin-bottom: 8px;
+    align-self: flex-start; /* Aligns item to the start of the flex container */
+    margin-bottom: 8px; /* Adds space below the version tag */
 }
 .brand{display:flex;align-items:center;gap:12px;}
 .logo{ width:48px;height:48px;border-radius:50%; background:conic-gradient(from 180deg,#ffffff,#e0e6ff,#a8e6cf,#ffd93d,#ffffff); display:flex;align-items:center;justify-content:center; font-weight:800;color:#667eea;overflow:hidden; }
@@ -32,6 +33,22 @@ h1{font-size:17px;margin:0;color:#ffffff;}
 .main{ display:flex;flex-direction:column;height:100%;overflow:hidden; background:var(--card); padding:24px; border-radius:20px 0 0 20px; margin:20px 0; box-shadow:0 20px 60px rgba(0, 0, 0, 0.3); color:#333; }
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .header-title{font-size:20px;font-weight:800; color:#333;}
+#viewControls { display: none; flex-direction: row; gap: 8px; }
+#viewControls button { padding: 6px 12px; font-size: 14px; border-radius:20px; }
+.view-btn.active { background: var(--accent); color: white; }
+.bookmark-list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;}
+.card{ display:flex;align-items:center;gap:12px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:15px;border-radius:20px;border:1px solid rgba(255,255,255,0.1); cursor:grab;transition:transform .1s, box-shadow .2s; box-shadow:0 5px 15px rgba(0,0,0,0.1); color:#ffffff; }
+.card .fav{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700; overflow:hidden; flex-shrink: 0; background:rgba(255,255,255,0.2);}
+.card .meta{flex:1;min-width:0;}
+.card .meta .title{font-weight:700; color:#ffffff;}
+.card .meta .url{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card .actions{display:flex;gap:6px;}
+.icon-btn{width:32px;height:32px;border-radius:8px;display:grid;place-items:center; border:1px solid rgba(255,255,255,0.2);cursor:pointer; background: rgba(255,255,255,0.1); color:#ffffff; flex-shrink: 0;}
+.icon-btn:hover{background:rgba(255,255,255,0.2);}
+.delete-cat, .edit-cat{ display:none; }
+.category:hover .delete-cat, .category:hover .edit-cat{ display:grid; }
+#homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius:20px; background:rgba(255,255,255,0.1); color:#ffffff; }
+#homeBtn svg { width: 22px; height: 22px; }
 .content-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:18px; }
 .grid-tile{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:20px;padding:16px;text-align:center; box-shadow:0 6px 16px rgba(0,0,0,0.1); transition:transform .2s, box-shadow .2s;cursor:pointer; text-decoration: none; color: #ffffff;}
 .grid-tile:hover{transform:translateY(-3px); box-shadow:0 10px 25px rgba(102, 126, 234, 0.3);}
@@ -47,10 +64,6 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 .btn{padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border:1px solid rgba(0,0,0,0.05);cursor:pointer; transition:background .2s; color:#ffffff;}
 .btn:hover{background:linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);}
 .switch{display:flex;align-items:center;gap:8px;margin-top:12px; user-select:none;}
-.delete-cat, .edit-cat{ display:none; }
-.category:hover .delete-cat, .category:hover .edit-cat{ display:grid; }
-#homeBtn { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; border-radius:20px; background:rgba(255,255,255,0.1); color:#ffffff; }
-#homeBtn svg { width: 22px; height: 22px; }
 
 /* Weather Styles - Horizontal Layout */
 * {
@@ -439,7 +452,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v2.0</div>
+    <div id="versionInfo">v1.9</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -478,6 +491,10 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
   <main class="main" id="main">
     <div class="header">
       <div class="header-title" id="pageTitle">Home</div>
+      <div id="viewControls">
+        <button class="btn view-btn active" id="listViewBtn">List</button>
+        <button class="btn view-btn" id="cardViewBtn">Card</button>
+      </div>
     </div>
     <div id="contentArea"></div>
   </main>
@@ -528,7 +545,7 @@ import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/fireb
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI",
+    apiKey: "AIzaSyBZ5oi1Vb-cNFQIk04rKMDwLJWVx06DfmI", // Lütfen kendi Firebase config bilgilerinizle değiştirin
     authDomain: "my-g-bookmarks.firebaseapp.com",
     projectId: "my-g-bookmarks",
     storageBucket: "my-g-bookmarks.firebasestorage.app",
@@ -545,6 +562,7 @@ const auth = getAuth();
 let BOOKMARKS = [];
 let currentUser = null;
 let currentView = 'home'; // 'home' or a category ID
+let viewMode = 'list'; // 'list' or 'card'
 let editingState = { bookmarkId: null, categoryId: null };
 
 const $ = (selector) => document.querySelector(selector);
@@ -595,17 +613,22 @@ onAuthStateChanged(auth, async user => {
 async function saveBookmarks() {
     if (!currentUser) return;
 
+    // Kaydetmeden önce veriyi temizle
     const cleanedBookmarks = BOOKMARKS.map(cat => {
         const cleanedCat = { ...cat };
+        // Kategori öğelerini temizle
         cleanedCat.items = (cat.items || []).map(item => {
             const cleanedItem = {};
             for (const key in item) {
+                // undefined olmayan tüm alanları kopyala
                 if (item[key] !== undefined) {
                     cleanedItem[key] = item[key];
                 }
             }
             return cleanedItem;
         });
+
+        // Kategori alanlarını temizle (e.g. order)
         for (const key in cleanedCat) {
             if (cleanedCat[key] === undefined) {
                 delete cleanedCat[key];
@@ -615,7 +638,7 @@ async function saveBookmarks() {
     });
        
     try {
-        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks });
+        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks }); // Temizlenmiş veriyi kaydet
         console.log('Data saved successfully');
     } catch (error) {
         console.error('Error saving data: ', error);
@@ -645,7 +668,7 @@ function renderCategories() {
         const el = document.createElement('div');
         el.className = 'category' + (cat.id === currentView ? ' active' : '');
         el.dataset.id = cat.id;
-        el.innerHTML = `<div class="cat-icon">${cat.title.charAt(0).toUpperCase()}</div><div class="cat-name">${cat.title}</div><button class="icon-btn edit-cat">Edit</button><button class="icon-btn delete-cat">Delete</button>`;
+        el.innerHTML = `<div class="cat-icon">${cat.title.charAt(0).toUpperCase()}</div><div class="cat-name">${cat.title}</div><button class="icon-btn edit-cat">🖊️</button><button class="icon-btn delete-cat">🗑️</button>`;
         categoriesEl.appendChild(el);
     });
 }
@@ -667,25 +690,9 @@ let isPlaying = false;
 let volume = 50;
 const audio = new Audio();
 
-// Max FM sorunu: İlk yüklemede CORS hatası alabilir, bu yüzden ilk oynatmayı kullanıcı etkileşimiyle başlat
-let hasUserInteracted = false;
-
 function updateRadioScreen() {
   const station = stations[currentStationIndex];
   $('#radioScreen').textContent = `${station.name} - ${station.frequency} MHz`;
-}
-
-function loadAndPlay() {
-  const station = stations[currentStationIndex];
-  audio.src = station.url;
-  audio.load();
-  if (isPlaying && hasUserInteracted) {
-    audio.play().catch(err => {
-      console.error("Ses oynatılamadı:", err);
-      isPlaying = false;
-      $('#playPauseBtn').textContent = 'Play';
-    });
-  }
 }
 
 function changeStation(direction) {
@@ -694,17 +701,19 @@ function changeStation(direction) {
   } else {
     currentStationIndex = (currentStationIndex + 1) % stations.length;
   }
+  audio.src = stations[currentStationIndex].url;
   updateRadioScreen();
-  loadAndPlay();
+  if (isPlaying) {
+    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
+  }
 }
 
 function togglePlayPause() {
-  hasUserInteracted = true;
   isPlaying = !isPlaying;
   const btn = $('#playPauseBtn');
-  btn.textContent = isPlaying ? 'Pause' : 'Play';
+  btn.textContent = isPlaying ? '⏸' : '▶';
   if (isPlaying) {
-    loadAndPlay();
+    audio.play().catch(err => console.error("Ses oynatılamadı:", err));
   } else {
     audio.pause();
   }
@@ -736,37 +745,38 @@ const BASE_URL = 'https://api.weatherapi.com/v1';
 
 function getWeatherIcon(code, isDay) {
     const icons = {
-        1000: isDay ? 'Sunny' : 'Moon', // Clear
-        1003: 'Partly cloudy', // Partly cloudy
-        1006: 'Cloudy', // Cloudy
-        1009: 'Cloudy', // Overcast
-        1030: 'Fog', // Mist
-        1063: 'Rain', // Patchy rain possible
-        1066: 'Snow', // Patchy snow possible
-        1180: 'Rain', // Patchy light rain
-        1183: 'Rain', // Light rain
-        1186: 'Rain', // Moderate rain
-        1189: 'Rain', // Moderate rain
-        1192: 'Thunderstorm', // Heavy rain
-        1195: 'Thunderstorm', // Heavy rain
-        1210: 'Snow', // Patchy light snow
-        1213: 'Snow', // Light snow
-        1216: 'Snow', // Patchy moderate snow
-        1219: 'Snow', // Moderate snow
-        1222: 'Snow', // Patchy heavy snow
-        1225: 'Snow', // Heavy snow
-        1240: 'Rain', // Light rain shower
-        1243: 'Thunderstorm', // Moderate or heavy rain shower
-        1246: 'Thunderstorm', // Torrential rain shower
-        1273: 'Thunderstorm', // Patchy light rain with thunder
-        1276: 'Thunderstorm', // Moderate or heavy rain with thunder
+        1000: isDay ? '☀️' : '🌙', // Clear
+        1003: '⛅', // Partly cloudy
+        1006: '☁️', // Cloudy
+        1009: '☁️', // Overcast
+        1030: '🌫️', // Mist
+        1063: '🌦️', // Patchy rain possible
+        1066: '🌨️', // Patchy snow possible
+        1180: '🌧️', // Patchy light rain
+        1183: '🌧️', // Light rain
+        1186: '🌧️', // Moderate rain
+        1189: '🌧️', // Moderate rain
+        1192: '⛈️', // Heavy rain
+        1195: '⛈️', // Heavy rain
+        1210: '❄️', // Patchy light snow
+        1213: '❄️', // Light snow
+        1216: '❄️', // Patchy moderate snow
+        1219: '❄️', // Moderate snow
+        1222: '🌨️', // Patchy heavy snow
+        1225: '🌨️', // Heavy snow
+        1240: '🌦️', // Light rain shower
+        1243: '⛈️', // Moderate or heavy rain shower
+        1246: '⛈️', // Torrential rain shower
+        1273: '⛈️', // Patchy light rain with thunder
+        1276: '⛈️', // Moderate or heavy rain with thunder
     };
-    return icons[code] || 'Cloud';
+    return icons[code] || '☁️';
 }
 
 function createWeatherAnimation(code, animationEl) {
     animationEl.innerHTML = '';
     
+    // Rain animation (codes 1063, 1180-1246)
     if (code >= 1180 && code <= 1246) {
         for (let i = 0; i < 30; i++) {
             const drop = document.createElement('div');
@@ -777,6 +787,7 @@ function createWeatherAnimation(code, animationEl) {
             animationEl.appendChild(drop);
         }
     }
+    // Snow animation (codes 1210-1225)
     else if (code >= 1210 && code <= 1225) {
         for (let i = 0; i < 20; i++) {
             const flake = document.createElement('div');
@@ -787,10 +798,11 @@ function createWeatherAnimation(code, animationEl) {
             animationEl.appendChild(flake);
         }
     }
+    // Sun animation (code 1000)
     else if (code === 1000) {
         const rays = document.createElement('div');
         rays.className = 'sun-rays';
-        rays.innerHTML = 'Sun';
+        rays.innerHTML = '☀️';
         animationEl.appendChild(rays);
     }
 }
@@ -798,11 +810,18 @@ function createWeatherAnimation(code, animationEl) {
 async function fetchWeatherData(district) {
     try {
         const location = `${district}, Ankara, Turkey`;
+        
+        // Fetch current weather and forecast
         const response = await fetch(
             `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=yes&lang=tr`
         );
-        if (!response.ok) throw new Error('Hava durumu verileri alınamadı');
-        return await response.json();
+        
+        if (!response.ok) {
+            throw new Error('Hava durumu verileri alınamadı');
+        }
+        
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error('API Error:', error);
         return null;
@@ -815,6 +834,7 @@ function updateWeather(data) {
     const current = data.current;
     const forecast = data.forecast.forecastday;
     
+    // Update current weather
     document.getElementById('currentTemp').textContent = Math.round(current.temp_c) + '°';
     document.getElementById('weatherDesc').textContent = current.condition.text;
     document.getElementById('mainIcon').textContent = getWeatherIcon(current.condition.code, current.is_day);
@@ -824,11 +844,20 @@ function updateWeather(data) {
     
     createWeatherAnimation(current.condition.code, document.getElementById('weatherAnimation'));
     
+    // Update hourly forecast (next 12 hours)
     const hourlyDiv = document.getElementById('hourlyForecast');
     const allHours = [];
-    forecast.forEach(day => allHours.push(...day.hour));
+    
+    // Get hours from all forecast days
+    forecast.forEach(day => {
+        allHours.push(...day.hour);
+    });
+    
+    // Get current hour index
     const now = new Date();
     const currentHour = now.getHours();
+    
+    // Filter to show next 12 hours starting from current hour
     const next12Hours = allHours.slice(currentHour, currentHour + 12);
     
     hourlyDiv.innerHTML = next12Hours.map(hour => {
@@ -838,11 +867,12 @@ function updateWeather(data) {
                 <div class="hour-time">${time.getHours()}:00</div>
                 <div class="hour-icon">${getWeatherIcon(hour.condition.code, hour.is_day)}</div>
                 <div class="hour-temp">${Math.round(hour.temp_c)}°</div>
-                <div class="hour-rain">Rain ${hour.chance_of_rain}%</div>
+                <div class="hour-rain">💧 ${hour.chance_of_rain}%</div>
             </div>
         `;
     }).join('');
     
+    // Update daily forecast (3 days)
     const dailyDiv = document.getElementById('dailyForecast');
     const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
     
@@ -857,7 +887,7 @@ function updateWeather(data) {
                     <span class="temp-max">${Math.round(day.day.maxtemp_c)}°</span>
                     <span class="temp-min">${Math.round(day.day.mintemp_c)}°</span>
                 </div>
-                <div class="day-rain">Rain ${day.day.daily_chance_of_rain}%</div>
+                <div class="day-rain">💧 ${day.day.daily_chance_of_rain}%</div>
             </div>
         `;
     }).join('');
@@ -870,29 +900,39 @@ async function initWeatherWidget() {
     if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
     
     const data = await fetchWeatherData('Etimesgut');
-    if (data) updateWeather(data);
+    if (data) {
+        updateWeather(data);
+    }
 
+    // Attach event listener
     const districtSelect = document.getElementById('districtSelect');
     if (districtSelect) {
         districtSelect.addEventListener('change', async (e) => {
             if (hourlyDiv) hourlyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
             if (dailyDiv) dailyDiv.innerHTML = '<div class="loading">Yükleniyor...</div>';
+            
             const data = await fetchWeatherData(e.target.value);
-            if (data) updateWeather(data);
+            if (data) {
+                updateWeather(data);
+            }
         });
     }
 }
 
 function renderHome() {
     $('#pageTitle').textContent = 'Home';
+    $('#viewControls').style.display = 'none';
     const homeItems = BOOKMARKS.flatMap(c => (c.items || []).filter(i => i.showHome));
     const contentArea = $('#contentArea');
+
+    // Ana içerik alanını temizle
     contentArea.innerHTML = '';
 
+    // Tüm ana sayfa içeriği için bir sarmalayıcı oluştur
     const homeContainer = document.createElement('div');
     homeContainer.style.cssText = "display: flex; flex-direction: column; gap: 24px;";
 
-    // Favori Bookmarklar
+    // --- BÖLÜM 1: Favori Yer İmleri ---
     const favoritesSection = document.createElement('div');
     const favoritesHeader = document.createElement('h2');
     favoritesHeader.textContent = 'Favori Bookmarklar';
@@ -916,12 +956,13 @@ function renderHome() {
     }
     homeContainer.appendChild(favoritesSection);
 
-    // Hava Durumu Widget
+    // --- BÖLÜM 2: Hava Durumu Widget ---
     const weatherSection = document.createElement('div');
     weatherSection.innerHTML = `
         <div class="widget-container">
             <div class="widget-header" id="header">
                 <div class="weather-animation" id="weatherAnimation"></div>
+                
                 <div class="district-selector">
                     <select id="districtSelect">
                         <option value="Etimesgut">Etimesgut</option>
@@ -937,37 +978,42 @@ function renderHome() {
                         <option value="Ankara Merkez">Ankara Merkez</option>
                     </select>
                 </div>
+
                 <div class="current-weather">
                     <div>
                         <div class="current-temp" id="currentTemp">--°</div>
                         <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
                     </div>
-                    <div class="weather-icon-main" id="mainIcon">Cloud</div>
+                    <div class="weather-icon-main" id="mainIcon">☁️</div>
                 </div>
+
                 <div class="weather-details" id="weatherDetails">
                     <div class="detail-item">
-                        <span class="detail-icon">Humidity</span>
+                        <span class="detail-icon">💧</span>
                         <span id="humidity">--%</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-icon">Wind</span>
+                        <span class="detail-icon">💨</span>
                         <span id="wind">-- km/s</span>
                     </div>
                     <div class="detail-item">
-                        <span class="detail-icon">Rain</span>
+                        <span class="detail-icon">🌧️</span>
                         <span id="rainChance">--%</span>
                     </div>
                 </div>
+
                 <div class="api-notice" id="apiNotice">
                     WeatherAPI.com - Gerçek hava durumu verileri
                 </div>
             </div>
+
             <div class="widget-body">
-                <div class="section-title">Saatlik</div>
+                <div class="section-title">📅 Saatlik</div>
                 <div class="hourly-forecast" id="hourlyForecast">
                     <div class="loading">Yükleniyor...</div>
                 </div>
-                <div class="section-title">Günlük</div>
+
+                <div class="section-title">📆 Günlük</div>
                 <div class="daily-forecast" id="dailyForecast">
                     <div class="loading">Yükleniyor...</div>
                 </div>
@@ -975,9 +1021,13 @@ function renderHome() {
         </div>
     `;
     homeContainer.appendChild(weatherSection);
+
     contentArea.appendChild(homeContainer);
 
-    setTimeout(() => initWeatherWidget(), 100);
+    // Initialize weather widget after rendering
+    setTimeout(() => {
+        initWeatherWidget();
+    }, 100);
 }
 
 function renderCategory(catId) {
@@ -985,24 +1035,38 @@ function renderCategory(catId) {
     if (!cat) { currentView = 'home'; renderApp(); return; }
 
     $('#pageTitle').textContent = cat.title;
+    $('#viewControls').style.display = 'flex';
+    $('#listViewBtn').classList.toggle('active', viewMode === 'list');
+    $('#cardViewBtn').classList.toggle('active', viewMode === 'card');
 
     const contentArea = $('#contentArea');
     contentArea.innerHTML = '';
     const items = cat.items || [];
     const container = document.createElement('div');
-    container.className = 'content-grid';
 
     if (items.length > 0) {
+        container.className = viewMode === 'list' ? 'bookmark-list' : 'content-grid';
         items.forEach(item => {
-            const tile = document.createElement('a');
-            tile.className = 'grid-tile';
-            tile.href = item.url;
-            tile.target = '_blank';
-            tile.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class='title'>${item.title}</div>`;
-            container.appendChild(tile);
+            const el = document.createElement(viewMode === 'list' ? 'div' : 'a');
+            el.className = viewMode === 'list' ? 'card' : 'grid-tile';
+            
+            if(viewMode === 'list') {
+                el.dataset.id = item.id;
+                el.dataset.categoryId = cat.id;
+                const iconHtml = createFaviconHTML(item, item.title.charAt(0).toUpperCase());
+                el.innerHTML = `
+                    <a href="${item.url}" target="_blank" class="fav" style="background:rgba(255,255,255,0.2); color:#667eea; text-decoration:none; display:flex; align-items:center; justify-content:center;">${iconHtml}</a>
+                    <div class="meta"><a href="${item.url}" target="_blank" style="text-decoration:none; color:inherit;"><div class="title">${item.title}</div></a><div class="url">${item.url}</div></div>
+                    <div class="actions"><button class="icon-btn edit-btn">✏️</button><button class="icon-btn delete-btn">🗑️</button></div>`;
+            } else {
+                el.href = item.url;
+                el.target = '_blank';
+                el.innerHTML = `${createFaviconHTML(item, item.title.charAt(0).toUpperCase())}<div class='title'>${item.title}</div>`;
+            }
+            container.appendChild(el);
         });
     } else {
-        container.innerHTML = `<div style='padding:20px; color:#666; grid-column: 1 / -1;'>Bu kategori boş.</div>`;
+        container.innerHTML = `<div style='padding:20px; color:#666'>This category is empty.</div>`;
     }
     contentArea.appendChild(container);
     
@@ -1044,7 +1108,7 @@ function openModalForEdit(bookmarkId, categoryId) {
 }
 
 function openModalForAdd() {
-    if (currentView === 'home') { alert("Lütfen bir kategori seçin."); return; }
+    if (currentView === 'home') { alert("Please select a category first."); return; }
     editingState = { bookmarkId: null, categoryId: currentView };
     $('#modalTitle').textContent = "Add Bookmark";
     $('#mTitle').value = ''; $('#mUrl').value = ''; $('#mIcon').value = ''; $('#mShowHome').checked = false;
@@ -1056,12 +1120,12 @@ $('#saveModal').onclick = async () => {
     const title = $('#mTitle').value.trim();
     let url = $('#mUrl').value.trim();
     const newCatId = $('#mCategory').value;
-    if (!title || !url || !newCatId) return alert("Başlık, URL ve Kategori gereklidir.");
+    if (!title || !url || !newCatId) return alert("Title, URL, and Category are required.");
     if (!url.match(/^https?:\/\//i)) url = 'https://' + url;
 
     const bookmarkData = { title, url, icon: $('#mIcon').value.trim() || undefined, showHome: !!$('#mShowHome').checked };
     const newCat = BOOKMARKS.find(c => c.id === newCatId);
-    if (!newCat) return alert("Geçersiz kategori.");
+    if (!newCat) return alert("Invalid category.");
 
     if (editingState.bookmarkId) {
         const { bookmark, category } = findBookmark(editingState.bookmarkId);
@@ -1092,12 +1156,12 @@ function openCategoryEditModal(catId) {
 $('#saveCategoryEdit').onclick = () => {
     const title = $('#ceTitle').value.trim();
     const order = parseInt($('#ceOrder').value);
-    if (!title) return alert("Kategori adı gereklidir.");
+    if (!title) return alert("Category name is required.");
     const catId = editingState.categoryId;
     const cat = BOOKMARKS.find(c => c.id === catId);
     if (cat) {
         if (BOOKMARKS.some(c => c.id !== catId && c.title.toLowerCase() === title.toLowerCase())) {
-            return alert(`"${title}" kategorisi zaten var.`);
+            return alert(`Category "${title}" already exists.`);
         }
         cat.title = title;
         cat.order = isNaN(order) ? 999 : order;
@@ -1109,7 +1173,7 @@ $('#saveCategoryEdit').onclick = () => {
 $('#saveCategory').onclick = () => {
     const title = $('#cTitle').value.trim();
     if (!title) return;
-    if (BOOKMARKS.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert(`"${title}" kategorisi zaten var.`);
+    if (BOOKMARKS.some(c => c.title.toLowerCase() === title.toLowerCase())) return alert(`Category "${title}" already exists.`);
     const minOrder = BOOKMARKS.length > 0 ? Math.min(...BOOKMARKS.map(c => c.order ?? 0)) : 0;
     BOOKMARKS.unshift({ id: 'cat_' + Date.now(), title, order: minOrder - 1, color: `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`, items: [] });
     $('#modalCategory').classList.remove('active');
@@ -1121,6 +1185,8 @@ $('#loginBtn').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).c
 $('#miniSignOutBtn').onclick = () => signOut(auth);
 $('#homeBtn').onclick = () => { currentView = 'home'; renderApp(); };
 $('#addCategoryBtn').onclick = () => { $('#cTitle').value = ''; $('#modalCategory').classList.add('active'); };
+$('#listViewBtn').onclick = () => { viewMode = 'list'; renderApp(); };
+$('#cardViewBtn').onclick = () => { viewMode = 'card'; renderApp(); };
 
 $('#categories').addEventListener('click', e => {
     const categoryEl = e.target.closest('.category');
@@ -1128,7 +1194,7 @@ $('#categories').addEventListener('click', e => {
     const catId = categoryEl.dataset.id;
     if (e.target.closest('.edit-cat')) openCategoryEditModal(catId);
     else if (e.target.closest('.delete-cat')) {
-        if (!confirm("Yer imleri 'Diğer' kategorisine taşınacak.")) return;
+        if (!confirm("Bookmarks will be moved to 'Diğer' category.")) return;
         const catToDelete = BOOKMARKS.find(c => c.id === catId);
         if (!catToDelete) return;
         let otherCat = BOOKMARKS.find(c => c.id === 'cat_other');
@@ -1150,6 +1216,15 @@ $('#categories').addEventListener('click', e => {
 $('#contentArea').addEventListener('click', e => {
     const addBtn = e.target.closest('.btn');
     if (addBtn && addBtn.textContent.includes('+ Add Bookmark')) return openModalForAdd();
+    const card = e.target.closest('.card');
+    if (!card) return;
+    if (e.target.closest('.edit-btn')) openModalForEdit(card.dataset.id, card.dataset.categoryId);
+    else if (e.target.closest('.delete-btn')) {
+        if (!confirm("Are you sure?")) return;
+        const { category } = findBookmark(card.dataset.id);
+        if (category) category.items = (category.items || []).filter(i => i.id !== card.dataset.id);
+        handleDataChange();
+    }
 });
 
 // Close Modals
