@@ -1,547 +1,134 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ankara Hava Durumu Widget</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .widget-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            max-width: 900px;
-            width: 100%;
-            overflow: visible;
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: row;
-            min-height: 400px;
-        }
-
-        .widget-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px 0 0 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-width: 250px;
-        }
-
-        .weather-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .rain-drop {
-            position: absolute;
-            width: 2px;
-            height: 20px;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
-            animation: rain-fall linear infinite;
-        }
-
-        @keyframes rain-fall {
-            to { transform: translateY(400px); }
-        }
-
-        .snow-flake {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            animation: snow-fall linear infinite;
-        }
-
-        @keyframes snow-fall {
-            to { transform: translateY(400px) rotate(360deg); }
-        }
-
-        .sun-rays {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            width: 80px;
-            height: 80px;
-            animation: rotate 20s linear infinite;
-            font-size: 60px;
-        }
-
-        @keyframes rotate {
-            to { transform: rotate(360deg); }
-        }
-
-        .district-selector {
-            position: relative;
-            z-index: 10;
-            margin-bottom: 15px;
-        }
-
-        .district-selector select {
-            width: 100%;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            cursor: pointer;
-            outline: none;
-            font-weight: 600;
-        }
-
-        .district-selector select option {
-            background: #667eea;
-            color: white;
-        }
-
-        .current-weather {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .current-temp {
-            font-size: 48px;
-            font-weight: bold;
-        }
-
-        .weather-icon-main {
-            font-size: 50px;
-        }
-
-        .weather-desc {
-            font-size: 14px;
-            margin-top: 8px;
-            text-align: center;
-        }
-
-        .weather-details {
-            display: flex;
-            gap: 15px;
-            position: relative;
-            z-index: 10;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-        }
-
-        .detail-icon {
-            font-size: 16px;
-        }
-
-        .api-notice {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 10px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .widget-body {
-            padding: 20px;
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-radius: 0 20px 20px 0;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-        .hourly-forecast {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 8px 0;
-            margin-bottom: 15px;
-            flex: 1;
-        }
-
-        .hourly-forecast::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .hourly-forecast::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .hourly-forecast::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
-        }
-
-        .hour-card {
-            min-width: 70px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            flex-shrink: 0;
-        }
-
-        .hour-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .hour-time {
-            font-size: 11px;
-            margin-bottom: 4px;
-            opacity: 0.9;
-        }
-
-        .hour-icon {
-            font-size: 24px;
-            margin: 4px 0;
-        }
-
-        .hour-temp {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .hour-rain {
-            font-size: 9px;
-            margin-top: 3px;
-            opacity: 0.8;
-        }
-
-        .daily-forecast {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 8px 0;
-        }
-
-        .day-card {
-            min-width: 90px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid transparent;
-            flex-shrink: 0;
-        }
-
-        .day-card:hover {
-            border-color: #667eea;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-
-        .day-name {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-
-        .day-icon {
-            font-size: 28px;
-            margin: 8px 0;
-        }
-
-        .day-temps {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .temp-max {
-            font-weight: bold;
-        }
-
-        .temp-min {
-            opacity: 0.6;
-        }
-
-        .day-rain {
-            font-size: 9px;
-            margin-top: 4px;
-            opacity: 0.8;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 15px;
-            font-size: 14px;
-            color: #667eea;
-        }
-
-        .error {
-            text-align: center;
-            padding: 15px;
-            color: #e74c3c;
-        }
-
-        @media (max-width: 768px) {
-            .widget-container {
-                flex-direction: column;
-            }
-
-            .widget-header {
-                border-radius: 20px 20px 0 0;
-                min-width: auto;
-            }
-
-            .widget-body {
-                border-radius: 0 0 20px 20px;
-            }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ankara Hava Durumu Widget</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.widget-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    width: 100%;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: row;
+    min-height: 200px;
+}
+.widget-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px 0 0 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 200px;
+}
+.weather-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.rain-drop { position: absolute; width: 2px; height: 20px; background: linear-gradient(transparent, rgba(255,255,255,0.6)); animation: rain-fall linear infinite; }
+@keyframes rain-fall { to { transform: translateY(200px); } }
+.snow-flake { position: absolute; width: 10px; height: 10px; background: white; border-radius: 50%; animation: snow-fall linear infinite; }
+@keyframes snow-fall { to { transform: translateY(200px) rotate(360deg); } }
+.sun-rays { position: absolute; top: 50%; right: 20px; width: 60px; height: 60px; animation: rotate 20s linear infinite; font-size: 40px; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+.district-selector select {
+    width: 100%; padding: 6px 12px; border: none; border-radius: 10px; background: rgba(255,255,255,0.2); color: white; cursor: pointer; outline: none;
+}
+.current-temp { font-size: 36px; font-weight: bold; }
+.weather-icon-main { font-size: 40px; }
+.weather-desc { font-size: 12px; margin-top: 5px; text-align: center; }
+.detail-item { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+.api-notice { background: rgba(255,255,255,0.2); padding: 5px; border-radius: 5px; font-size: 8px; margin-top: 5px; text-align: center; }
+.widget-body { padding: 15px; flex: 2; display: flex; flex-direction: column; border-radius: 0 20px 20px 0; }
+.section-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; }
+.hourly-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; margin-bottom: 10px; flex: 1; }
+.hourly-forecast::-webkit-scrollbar { height: 4px; }
+.hourly-forecast::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
+.hour-card { min-width: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 8px; text-align: center; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.hour-card:hover { transform: translateY(-2px); }
+.daily-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; }
+.day-card { min-width: 80px; background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border-radius: 10px; padding: 10px; text-align: center; border: 1px solid transparent; }
+.day-card:hover { border-color: #667eea; transform: translateY(-2px); }
+.loading { text-align: center; padding: 10px; font-size: 12px; color: #667eea; }
+</style>
 </head>
 <body>
-    <div class="widget-container">
-        <div class="widget-header">
-            <div class="weather-animation" id="weatherAnimation"></div>
-            <div class="district-selector">
-                <select id="districtSelect">
-                    <option value="Etimesgut">Etimesgut</option>
-                    <option value="Çankaya">Çankaya</option>
-                    <option value="Keçiören">Keçiören</option>
-                    <option value="Mamak">Mamak</option>
-                    <option value="Yenimahalle">Yenimahalle</option>
-                    <option value="Altındağ">Altındağ</option>
-                    <option value="Sincan">Sincan</option>
-                    <option value="Pursaklar">Pursaklar</option>
-                    <option value="Gölbaşı">Gölbaşı</option>
-                    <option value="Polatlı">Polatlı</option>
-                    <option value="Ankara Merkez">Ankara Merkez</option>
-                </select>
-            </div>
-            <div class="current-weather">
-                <div>
-                    <div class="current-temp" id="currentTemp">--°</div>
-                    <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
-                </div>
-                <div class="weather-icon-main" id="mainIcon">☁️</div>
-            </div>
-            <div class="weather-details">
-                <div class="detail-item">
-                    <span class="detail-icon">💧</span>
-                    <span id="humidity">--%</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-icon">💨</span>
-                    <span id="wind">-- km/s</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-icon">🌧️</span>
-                    <span id="rainChance">--%</span>
-                </div>
-            </div>
-            <div class="api-notice">
-                WeatherAPI.com - Gerçek hava durumu verileri
-            </div>
+
+<div class="widget-container">
+    <div class="widget-header">
+        <div class="weather-animation" id="weatherAnimation"></div>
+        <div class="district-selector">
+            <select id="districtSelect">
+                <option value="Etimesgut">Etimesgut</option>
+                <option value="Çankaya">Çankaya</option>
+                <option value="Keçiören">Keçiören</option>
+                <option value="Mamak">Mamak</option>
+                <option value="Yenimahalle">Yenimahalle</option>
+                <option value="Altındağ">Altındağ</option>
+                <option value="Sincan">Sincan</option>
+                <option value="Pursaklar">Pursaklar</option>
+                <option value="Gölbaşı">Gölbaşı</option>
+                <option value="Polatlı">Polatlı</option>
+                <option value="Ankara Merkez">Ankara Merkez</option>
+            </select>
         </div>
-        <div class="widget-body">
-            <div class="section-title">Saatlik Tahmin</div>
-            <div class="hourly-forecast" id="hourlyForecast">
-                <div class="loading">Yükleniyor...</div>
+        <div class="current-weather">
+            <div>
+                <div class="current-temp" id="currentTemp">--°</div>
+                <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
             </div>
-            <div class="section-title">Günlük Tahmin</div>
-            <div class="daily-forecast" id="dailyForecast">
-                <div class="loading">Yükleniyor...</div>
-            </div>
+            <div class="weather-icon-main" id="mainIcon">Cloud</div>
         </div>
+        <div class="weather-details">
+            <div class="detail-item">Humidity <span id="humidity">--%</span></div>
+            <div class="detail-item">Wind <span id="wind">-- km/s</span></div>
+            <div class="detail-item">Rain <span id="rainChance">--%</span></div>
+        </div>
+        <div class="api-notice">WeatherAPI.com</div>
     </div>
+    <div class="widget-body">
+        <div class="section-title">Saatlik</div>
+        <div class="hourly-forecast" id="hourlyForecast"><div class="loading">Yükleniyor...</div></div>
+        <div class="section-title">Günlük</div>
+        <div class="daily-forecast" id="dailyForecast"><div class="loading">Yükleniyor...</div></div>
+    </div>
+</div>
 
-    <script>
-        const API_KEY = 'cd6435a221fb4a71881124700252110';
-        const BASE_URL = 'https://api.weatherapi.com/v1';
+<script>
+const API_KEY = 'cd6435a221fb4a71881124700252110';
+const BASE_URL = 'https://api.weatherapi.com/v1';
 
-        function getWeatherIcon(code, isDay) {
-            const icons = {
-                1000: isDay ? '☀️' : '🌙',
-                1003: '⛅',
-                1006: '☁️',
-                1009: '☁️',
-                1030: '🌫️',
-                1063: '🌧️',
-                1066: '🌨️',
-                1180: '🌧️',
-                1183: '🌧️',
-                1186: '🌧️',
-                1189: '🌧️',
-                1192: '⛈️',
-                1195: '⛈️',
-                1210: '🌨️',
-                1213: '🌨️',
-                1216: '🌨️',
-                1219: '🌨️',
-                1222: '🌨️',
-                1225: '🌨️',
-                1240: '🌧️',
-                1243: '⛈️',
-                1246: '⛈️',
-                1273: '⛈️',
-                1276: '⛈️',
-            };
-            return icons[code] || '☁️';
+function getWeatherIcon(code, isDay) {
+    const icons = {
+        1000: isDay ? 'Sun' : 'Moon', 1003: 'Cloud-Sun', 1006: 'Cloud', 1009: 'Cloud',
+        1030: 'Fog', 1063: 'Cloud-Rain', 1180: 'Rain', 1183: 'Rain', 1195: 'Heavy-Rain',
+        1210: 'Snow', 1240: 'Rain', 1273: 'Thunder', 1276: 'Thunder-Rain'
+    };
+    return icons[code] || 'Cloud';
+}
+
+function createWeatherAnimation(code, el) {
+    el.innerHTML = '';
+    if (code >= 1180 && code <= 1246) {
+        for (let i = 0; i < 30; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            el.appendChild(drop);
         }
-
-        function createWeatherAnimation(code, animationEl) {
-            animationEl.innerHTML = '';
-            
-            if (code >= 1180 && code <= 1246) {
-                for (let i = 0; i < 30; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'rain-drop';
-                    drop.style.left = Math.random() * 100 + '%';
-                    drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
-                    drop.style.animationDelay = Math.random() * 2 + 's';
-                    animationEl.appendChild(drop);
-                }
-            }
-            else if (code >= 1210 && code <= 1225) {
-                for (let i = 0; i < 20; i++) {
-                    const flake = document.createElement('div');
-                    flake.className = 'snow-flake';
-                    flake.style.left = Math.random() * 100 + '%';
-                    flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    flake.style.animationDelay = Math.random() * 2 + 's';
-                    animationEl.appendChild(flake);
-                }
-            }
-            else if (code === 1000) {
-                const rays = document.createElement('div');
-                rays.className = 'sun-rays';
-                rays.innerHTML = '☀️';
-                animationEl.appendChild(rays);
-            }
-        }
-
-        async function fetchWeatherData(district) {
-            try {
-                const location = `${district}, Ankara, Turkey`;
-                const response = await fetch(
-                    `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=yes&lang=tr`
-                );
-                if (!response.ok) throw new Error('Hava durumu verileri alınamadı');
-                return await response.json();
-            } catch (error) {
-                console.error('API Error:', error);
-                document.getElementById('hourlyForecast').innerHTML = '<div class="error">Hava durumu verisi yüklenemedi</div>';
-                document.getElementById('dailyForecast').innerHTML = '<div class="error">Hava durumu verisi yüklenemedi</div>';
-                return null;
-            }
-        }
-
-        function updateWeather(data) {
-            if (!data) return;
-
-            const current = data.current;
-            const forecast = data.forecast.forecastday;
-            
-            document.getElementById('currentTemp').textContent = Math.round(current.temp_c) + '°';
-            document.getElementById('weatherDesc').textContent = current.condition.text;
-            document.getElementById('mainIcon').textContent = getWeatherIcon(current.condition.code, current.is_day);
-            document.getElementById('humidity').textContent = current.humidity + '%';
-            document.getElementById('wind').textContent = current.wind_kph.toFixed(1) + ' km/s';
-            document.getElementById('rainChance').textContent = (forecast[0].day.daily_chance_of_rain || 0) + '%';
-            
-            createWeatherAnimation(current.condition.code, document.getElementById('weatherAnimation'));
-            
-            const hourlyDiv = document.getElementById('hourlyForecast');
-            const allHours = [];
-            forecast.forEach(day => allHours.push(...day.hour));
-            const now = new Date();
-            const currentHour = now.getHours();
-            const next12Hours = allHours.slice(currentHour, currentHour + 12);
-            
-            hourlyDiv.innerHTML = next12Hours.map(hour => {
-                const time = new Date(hour.time);
-                return `
-                    <div class="hour-card">
-                        <div class="hour-time">${time.getHours()}:00</div>
-                        <div class="hour-icon">${getWeatherIcon(hour.condition.code, hour.is_day)}</div>
-                        <div class="hour-temp">${Math.round(hour.temp_c)}°</div>
-                        <div class="hour-rain">☔ ${hour.chance_of_rain}%</div>
-                    </div>
-                `;
-            }).join('');
-            
-            const dailyDiv = document.getElementById('dailyForecast');
-            const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-            
-            dailyDiv.innerHTML = forecast.map((day, index) => {
-                const date = new Date(day.date);
-                const dayName = index === 0 ? 'Bugün' : days[date.getDay()];
-                return `
-                    <div class="day-card">
-                        <div class="day-name">${dayName}</div>
-                        <div class="day-icon">${getWeatherIcon(day.day.condition.code, 1)}</div>
-                        <div class="day-temps">
-                            <span class="temp-max">${Math.round(day.day.maxtemp_c)}°</span>
-                            <span class="temp-min">${Math.round(day.day.mintemp_c)}°</span>
-                        </div>
-                        <div class="day-rain">☔ ${day.day.daily_chance_of_rain}%</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function initWeatherWidget() {
-            const data = await fetchWeatherData('Etimesgut');
-            if (data) updateWeather(data);
-
-            document.getElementById('districtSelect').addEventListener('change', async (e) => {
-                document.getElementById('hourlyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
-                document.getElementById('dailyForecast').innerHTML = '<div class="loading">Yükleniyor...</div>';
-                const data = await fetchWeatherData(e.target.value);
-                if (data) updateWeather(data);
-            });
-        }
-
-        initWeatherWidget();
-    </script>
-</body>
-</html>
+    } else if (code >= 1210 && code <= 1225) {
+        for (let i = 0; i < 20; i++) {
+            const flake = document.createElement('div');
+            flake.className = 'snow-flake';
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.animation
