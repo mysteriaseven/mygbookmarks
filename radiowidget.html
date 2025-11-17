@@ -3,111 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Radyo Widget</title>
+<title>Radyo Çalar</title>
 <style>
-body { margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
-#radioWidget {
-  background: rgba(255,255,255,0.1);
-  border-radius: 20px;
-  padding: 20px;
-  width: 320px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  color: white;
-}
-#radioScreen {
-  background: #000;
-  color: #00ff00;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  min-height: 40px;
-}
-.radio-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.radio-btn {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: none;
-  width: 50px; height: 50px;
-  border-radius: 50%;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-.radio-btn:hover { background: rgba(255,255,255,0.3); }
-#playPauseBtn { background: rgba(0,255,0,0.4); font-size: 1.8rem; }
-.volume-controls { display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 0.9rem; }
-.volume-btn { background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-.volume-btn:hover { background: rgba(255,255,255,0.3); }
+body{margin:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:15px;display:flex;justify-content:center;align-items:center;min-height:100vh;}
+#radioWidget{background:rgba(255,255,255,0.1);border-radius:20px;padding:20px;width:320px;text-align:center;backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,0.3);color:white;}
+#radioScreen{background:#000;color:#00ff00;padding:12px;border-radius:8px;margin-bottom:15px;font-family:'Courier New',monospace;font-size:1rem;min-height:40px;}
+.radio-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
+.radio-btn{background:rgba(255,255,255,0.2);color:white;border:none;width:50px;height:50px;border-radius:50%;font-size:1.4rem;cursor:pointer;}
+.radio-btn:hover{background:rgba(255,255,255,0.3);}
+#playPauseBtn{background:rgba(0,255,0,0.4);font-size:1.8rem;}
+.volume-controls{display:flex;justify-content:center;align-items:center;gap:10px;font-size:0.9rem;}
+.volume-btn{background:rgba(255,255,255,0.2);padding:6px 12px;border-radius:8px;cursor:pointer;}
+.volume-btn:hover{background:rgba(255,255,255,0.3);}
 </style>
 </head>
 <body>
-
 <div id="radioWidget">
   <div id="radioScreen">Radyo - İstasyon Seçin</div>
   <div class="radio-controls">
-    <button class="radio-btn" id="prevStationBtn">Prev</button>
-    <button class="radio-btn" id="playPauseBtn">Play</button>
-    <button class="radio-btn" id="nextStationBtn">Next</button>
+    <button class="radio-btn" id="prev">Prev</button>
+    <button class="radio-btn" id="playPause">Play</button>
+    <button class="radio-btn" id="next">Next</button>
   </div>
   <div class="volume-controls">
-    <button class="volume-btn" id="volumeDownBtn">Vol-</button>
-    <span id="volumeDisplay">50%</span>
-    <button class="volume-btn" id="volumeUpBtn">Vol+</button>
+    <button class="volume-btn" id="volDown">Vol-</button>
+    <span id="volDisplay">50%</span>
+    <button class="volume-btn" id="volUp">Vol+</button>
   </div>
 </div>
 
 <script>
 const stations = [
-  { name: "Max FM", frequency: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
-  { name: "Radyo ODTÜ", frequency: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
-  { name: "Radyo İlef", frequency: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
-  { name: "Groove Salad", frequency: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
-  { name: "Space Station", frequency: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
-  { name: "Lush", frequency: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
-  { name: "Drone Zone", frequency: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
-  { name: "Secret Agent", frequency: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
+  { name: "Max FM", f: 95.8, url: "https://maxfm.radyotvonline.net/stream/164/" },
+  { name: "Radyo ODTÜ", f: 103.1, url: "https://stream.radyoodtu.com.tr/canli" },
+  { name: "Radyo İlef", f: 91.0, url: "http://radyo.cc.ankara.edu.tr:8089/stream/1" },
+  { name: "Groove Salad", f: "Online", url: "https://ice5.somafm.com/groovesalad-128-mp3" },
+  { name: "Space Station", f: "Online", url: "https://ice5.somafm.com/spacestation-128-mp3" },
+  { name: "Lush", f: "Online", url: "https://ice5.somafm.com/lush-128-mp3" },
+  { name: "Drone Zone", f: "Online", url: "https://ice5.somafm.com/dronezone-128-mp3" },
+  { name: "Secret Agent", f: "Online", url: "https://ice5.somafm.com/secretagent-128-mp3" },
 ];
+let i = 0, playing = false, vol = 50;
+const audio = new Audio(); audio.volume = vol/100;
 
-let currentStationIndex = 0;
-let isPlaying = false;
-let volume = 50;
-const audio = new Audio();
-audio.volume = volume / 100;
+function update(){ document.getElementById('radioScreen').textContent = `${stations[i].name} - ${stations[i].f} MHz`; }
+function change(d){ i = (i + d + stations.length) % stations.length; audio.src = stations[i].url; update(); if(playing) audio.play(); }
+function toggle(){ playing=!playing; document.getElementById('playPause').textContent=playing?'Pause':'Play'; playing?audio.play():audio.pause(); }
+function volume(d){ vol=Math.max(0,Math.min(100,vol+d)); audio.volume=vol/100; document.getElementById('volDisplay').textContent=vol+'%'; }
 
-function updateScreen() {
-  const s = stations[currentStationIndex];
-  document.getElementById('radioScreen').textContent = `${s.name} - ${s.frequency} MHz`;
-}
+document.getElementById('prev').onclick=()=>change(-1);
+document.getElementById('next').onclick=()=>change(1);
+document.getElementById('playPause').onclick=toggle;
+document.getElementById('volDown').onclick=()=>volume(-10);
+document.getElementById('volUp').onclick=()=>volume(10);
 
-function changeStation(dir) {
-  currentStationIndex = (currentStationIndex + dir + stations.length) % stations.length;
-  audio.src = stations[currentStationIndex].url;
-  updateScreen();
-  if (isPlaying) audio.play().catch(e => console.log("Oynatma hatası:", e));
-}
-
-function togglePlay() {
-  isPlaying = !isPlaying;
-  document.getElementById('playPauseBtn').textContent = isPlaying ? 'Pause' : 'Play';
-  isPlaying ? audio.play() : audio.pause();
-}
-
-function changeVolume(delta) {
-  volume = Math.max(0, Math.min(100, volume + delta));
-  audio.volume = volume / 100;
-  document.getElementById('volumeDisplay').textContent = volume + '%';
-}
-
-document.getElementById('prevStationBtn').onclick = () => changeStation(-1);
-document.getElementById('nextStationBtn').onclick = () => changeStation(1);
-document.getElementById('playPauseBtn').onclick = togglePlay;
-document.getElementById('volumeDownBtn').onclick = () => changeVolume(-10);
-document.getElementById('volumeUpBtn').onclick = () => changeVolume(10);
-
-updateScreen();
+update();
 </script>
 </body>
 </html>
