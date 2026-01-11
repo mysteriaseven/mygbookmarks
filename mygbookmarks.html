@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v2.0</title>
+<title>My Bookmarks v2.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); --card:rgba(255, 255, 255, 0.95); --muted:#e0e6ff; --accent:#667eea; font-family:'Inter',sans-serif; }
@@ -67,7 +67,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     max-width: 100%;
     width: 100%;
-    overflow: hidden; /* Changed to hidden */
+    overflow: hidden;
     backdrop-filter: blur(10px);
     display: flex;
     flex-direction: row;
@@ -80,8 +80,8 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     color: white;
     position: relative;
     overflow: hidden;
-    border-radius: 20px; /* Changed border radius */
-    flex: 0 0 180px; /* Narrowed the left part */
+    border-radius: 20px;
+    flex: 0 0 180px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -102,7 +102,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
     position: relative;
     z-index: 10;
     display: flex;
-    flex-direction: column; /* Centered layout */
+    flex-direction: column;
     align-items: center;
     margin: 8px 0;
 }
@@ -110,7 +110,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 .weather-icon-main { font-size: 44px; margin: -5px 0; }
 .weather-desc { font-size: 13px; font-weight: 600; }
 .weather-details {
-    display: grid; /* Switched to grid for better alignment */
+    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px 12px;
     position: relative;
@@ -119,7 +119,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 }
 .detail-item { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; }
 .detail-icon { font-size: 14px; }
-.api-notice { display: none; } /* Hidden for a cleaner look */
+.api-notice { display: none; }
 .widget-body { padding: 15px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .section-title { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; }
 .hourly-forecast { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; margin-bottom: 10px; flex: 1; }
@@ -144,7 +144,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 .loading { text-align: center; padding: 10px; font-size: 12px; color: #667eea; }
 .error { text-align: center; padding: 10px; color: #e74c3c; }
 
-/* Radio Widget Styles - Updated Appearance */
+/* Radio Widget Styles */
 #radioWidget { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 20px; margin-top: 10px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); text-align: center; }
 #radioScreen { background: #000; color: #00ff00; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 1rem; font-family: 'Courier New', monospace; min-height: 60px; display: flex; flex-direction: column; justify-content: center; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5); }
 .station-name { font-size: 16px; font-weight: bold; margin-bottom: 2px; }
@@ -159,6 +159,118 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 .volume-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3); }
 .volume-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5); }
 #volumeDisplay { font-size: 18px; font-weight: bold; color: #667eea; min-width: 50px; text-align: center; }
+
+/* GAMES SECTION STYLES */
+.games-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-top: 24px;
+}
+.games-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.games-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+}
+.games-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 8px;
+}
+.game-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: none;
+    transition: all 0.2s;
+}
+.game-tab.active {
+    background: var(--accent);
+    color: white;
+}
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+}
+.game-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 2/3; /* Vertical Card Ratio */
+    background-color: #333;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.game-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+.game-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+}
+.game-card-title {
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.2;
+}
+.game-card-percent {
+    align-self: flex-end;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.game-card-percent.completed {
+    background: #00b894; /* Green for completed */
+}
+.game-edit-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+.game-card:hover .game-edit-btn {
+    display: flex;
+}
 
 /* Visual Improvements */
 .sidebar { box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -175,7 +287,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v2.0</div>
+    <div id="versionInfo">v2.1</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -281,6 +393,21 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
   </div>
 </div>
 
+<!-- GAME MODAL -->
+<div class="modal" id="modalGame">
+  <div class="modal-card">
+    <h3 id="modalGameTitle">Oyun Ekle</h3>
+    <div class="form-group"><label for="gTitle">Oyun Adı</label><input id="gTitle" type="text" placeholder="Örn: Witcher 3"></div>
+    <div class="form-group"><label for="gImage">Resim Linki (Dikey poster önerilir)</label><input id="gImage" type="text" placeholder="https://..."></div>
+    <div class="form-group"><label for="gPercent">Tamamlanma Yüzdesi (0-100)</label><input id="gPercent" type="number" min="0" max="100" value="0"></div>
+    <div class="modal-actions">
+      <button class="btn" id="deleteGameBtn" style="background:#e74c3c; display:none; margin-right:auto;">Sil</button>
+      <button class="btn" id="cancelGame">İptal</button>
+      <button class="btn" id="saveGame">Kaydet</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -302,10 +429,13 @@ const auth = getAuth();
 
 // --- STATE MANAGEMENT ---
 let BOOKMARKS = [];
+let GAMES = []; // Yeni oyun dizisi
 let currentUser = null;
 let currentView = 'home';
 let viewMode = 'card';
 let editingState = { bookmarkId: null, categoryId: null };
+let editingGameId = null; // Oyun düzenleme ID'si
+let activeGameTab = 'playing'; // 'playing' or 'completed'
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -332,7 +462,15 @@ onAuthStateChanged(auth, async user => {
         $('#settingsBtn').style.display = 'flex';
         
         const snap = await getDoc(doc(db, "bookmarks", currentUser.uid));
-        BOOKMARKS = (snap.exists() ? snap.data().categories : []) || [];
+        if (snap.exists()) {
+            const data = snap.data();
+            BOOKMARKS = data.categories || [];
+            GAMES = data.games || []; // Oyunları çek
+        } else {
+            BOOKMARKS = [];
+            GAMES = [];
+        }
+        
         BOOKMARKS.forEach((cat, i) => {
             if (cat.order === undefined) cat.order = i;
             cat.items = (cat.items || []).map(item => ({...item, showHome: !!item.showHome}));
@@ -347,6 +485,7 @@ onAuthStateChanged(auth, async user => {
         $('#addCategoryBtn').style.display = 'none';
         $('#settingsBtn').style.display = 'none';
         BOOKMARKS = [];
+        GAMES = [];
         currentView = 'home';
         renderApp();
         $('#contentArea').innerHTML = "<div style='padding:20px; color:#666'>Please sign in.</div>";
@@ -367,16 +506,15 @@ async function saveBookmarks() {
             }
             return cleanedItem;
         });
-        for (const key in cleanedCat) {
-            if (cleanedCat[key] === undefined) {
-                delete cleanedCat[key];
-            }
-        }
         return cleanedCat;
     });
        
     try {
-        await setDoc(doc(db, "bookmarks", currentUser.uid), { categories: cleanedBookmarks });
+        // Oyunları da kaydet
+        await setDoc(doc(db, "bookmarks", currentUser.uid), { 
+            categories: cleanedBookmarks,
+            games: GAMES 
+        });
     } catch (error) {
         console.error('Error saving data: ', error);
         alert('Failed to save data: ' + error.message);
@@ -478,9 +616,153 @@ function renderHome() {
         </div>
     `;
     homeContainer.appendChild(weatherSection);
+
+    // --- GAMES SECTION (YENİ EKLENDİ) ---
+    const gamesSection = document.createElement('div');
+    gamesSection.className = 'games-container';
+    gamesSection.innerHTML = `
+        <div class="games-header">
+            <div class="games-title">Oyunlarım</div>
+            <button class="btn" id="addGameBtn" style="font-size:12px; padding:6px 10px;">+ Oyun Ekle</button>
+        </div>
+        <div class="games-tabs">
+            <button class="game-tab ${activeGameTab === 'playing' ? 'active' : ''}" data-tab="playing">Oynadığım Oyunlar</button>
+            <button class="game-tab ${activeGameTab === 'completed' ? 'active' : ''}" data-tab="completed">Bitirilen Oyunlar</button>
+        </div>
+        <div class="games-grid" id="gamesGrid">
+            <!-- Oyun kartları buraya gelecek -->
+        </div>
+    `;
+    homeContainer.appendChild(gamesSection);
+
     contentArea.appendChild(homeContainer);
-    setTimeout(() => { initWeatherWidget(); }, 100);
+    
+    // Init widgets
+    setTimeout(() => { 
+        initWeatherWidget(); 
+        renderGames(); // Oyunları render et
+    }, 100);
 }
+
+// --- GAMES RENDER & LOGIC ---
+function renderGames() {
+    const grid = $('#gamesGrid');
+    if (!grid) return;
+    
+    let filteredGames = [];
+    if (activeGameTab === 'playing') {
+        filteredGames = GAMES.filter(g => g.percent < 100);
+    } else {
+        filteredGames = GAMES.filter(g => g.percent >= 100);
+    }
+
+    grid.innerHTML = '';
+    
+    if (filteredGames.length === 0) {
+        grid.innerHTML = `<div style="color:#888; font-size:13px; padding:10px;">Bu listede oyun yok.</div>`;
+        return;
+    }
+
+    filteredGames.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        // Varsayılan gri arkaplan veya oyun resmi
+        card.style.backgroundImage = `url('${game.image || ''}')`;
+        card.innerHTML = `
+            <button class="game-edit-btn" data-game-id="${game.id}">✏️</button>
+            <div class="game-card-overlay">
+                <div class="game-card-title">${game.title}</div>
+                <div class="game-card-percent ${game.percent >= 100 ? 'completed' : ''}">${game.percent}%</div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+
+    // Event listener for tab buttons within the rendered HTML
+    document.querySelectorAll('.game-tab').forEach(btn => {
+        btn.onclick = () => {
+            activeGameTab = btn.dataset.tab;
+            renderHome(); // Re-render whole home to reflect state
+        };
+    });
+
+    // Event listener for game edit buttons
+    document.querySelectorAll('.game-edit-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            openGameModal(btn.dataset.game-id);
+        };
+    });
+    
+    // Event listener for Add Game
+    const addGameBtn = $('#addGameBtn');
+    if(addGameBtn) addGameBtn.onclick = () => openGameModal();
+}
+
+function openGameModal(gameId = null) {
+    editingGameId = gameId;
+    const modal = $('#modalGame');
+    const deleteBtn = $('#deleteGameBtn');
+    
+    if (gameId) {
+        const game = GAMES.find(g => g.id === gameId);
+        if (game) {
+            $('#modalGameTitle').textContent = "Oyun Düzenle";
+            $('#gTitle').value = game.title;
+            $('#gImage').value = game.image;
+            $('#gPercent').value = game.percent;
+            deleteBtn.style.display = 'block';
+        }
+    } else {
+        $('#modalGameTitle').textContent = "Oyun Ekle";
+        $('#gTitle').value = '';
+        $('#gImage').value = '';
+        $('#gPercent').value = 0;
+        deleteBtn.style.display = 'none';
+    }
+    
+    modal.classList.add('active');
+}
+
+$('#saveGame').onclick = async () => {
+    const title = $('#gTitle').value.trim();
+    const image = $('#gImage').value.trim();
+    let percent = parseInt($('#gPercent').value);
+    
+    if (!title) return alert("Oyun adı gerekli.");
+    if (isNaN(percent) || percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+
+    if (editingGameId) {
+        const game = GAMES.find(g => g.id === editingGameId);
+        if (game) {
+            game.title = title;
+            game.image = image;
+            game.percent = percent;
+        }
+    } else {
+        GAMES.push({
+            id: 'g_' + Date.now(),
+            title,
+            image,
+            percent
+        });
+    }
+
+    $('#modalGame').classList.remove('active');
+    await handleDataChange();
+};
+
+$('#deleteGameBtn').onclick = async () => {
+    if (!editingGameId) return;
+    if (!confirm("Bu oyunu silmek istediğine emin misin?")) return;
+    
+    GAMES = GAMES.filter(g => g.id !== editingGameId);
+    $('#modalGame').classList.remove('active');
+    await handleDataChange();
+};
+
+$('#cancelGame').onclick = () => $('#modalGame').classList.remove('active');
 
 function renderCategory(catId) {
     const cat = BOOKMARKS.find(c => c.id === catId);
@@ -670,7 +952,8 @@ $('#categories').addEventListener('click', e => {
 
 $('#contentArea').addEventListener('click', e => {
     const addBtn = e.target.closest('.btn');
-    if (addBtn && addBtn.textContent.includes('+ Add Bookmark')) {
+    // Eğer tıklanan Add Game butonu değilse (ona ayrı listener atadık) ve bookmark ekle ise:
+    if (addBtn && addBtn.textContent.includes('+ Add Bookmark') && !addBtn.id.includes('addGameBtn')) {
         openModalForAdd();
         return;
     }
@@ -686,7 +969,11 @@ $('#contentArea').addEventListener('click', e => {
 
 // Close Modals
 [$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit'), $('#cancelSettings')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit'), $('#modalSettings')].forEach(m => m.classList.remove('active')); });
+document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') {
+        [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit'), $('#modalSettings'), $('#modalGame')].forEach(m => m.classList.remove('active')); 
+    }
+});
 
 // --- RADIO WIDGET JS ---
 const stations = [
