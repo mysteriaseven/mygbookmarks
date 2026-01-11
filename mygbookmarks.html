@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My Bookmarks v2.1</title>
+<title>My Bookmarks v2.2</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:linear-gradient(135deg, #667eea 0%, #764ba2 100%); --card:rgba(255, 255, 255, 0.95); --muted:#e0e6ff; --accent:#667eea; font-family:'Inter',sans-serif; }
@@ -287,7 +287,7 @@ input[type=text], input[type=number], textarea, select{width:100%;padding:10px;b
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
-    <div id="versionInfo">v2.1</div>
+    <div id="versionInfo">v2.2</div>
     <div class="brand">
       <div class="logo" id="userLogo">Y</div>
       <div>
@@ -617,7 +617,7 @@ function renderHome() {
     `;
     homeContainer.appendChild(weatherSection);
 
-    // --- GAMES SECTION (YENİ EKLENDİ) ---
+    // --- GAMES SECTION ---
     const gamesSection = document.createElement('div');
     gamesSection.className = 'games-container';
     gamesSection.innerHTML = `
@@ -666,8 +666,8 @@ function renderGames() {
     filteredGames.forEach(game => {
         const card = document.createElement('div');
         card.className = 'game-card';
-        // Varsayılan gri arkaplan veya oyun resmi
         card.style.backgroundImage = `url('${game.image || ''}')`;
+        // data-game-id attribute düzeltildi
         card.innerHTML = `
             <button class="game-edit-btn" data-game-id="${game.id}">✏️</button>
             <div class="game-card-overlay">
@@ -677,26 +677,7 @@ function renderGames() {
         `;
         grid.appendChild(card);
     });
-
-    // Event listener for tab buttons within the rendered HTML
-    document.querySelectorAll('.game-tab').forEach(btn => {
-        btn.onclick = () => {
-            activeGameTab = btn.dataset.tab;
-            renderHome(); // Re-render whole home to reflect state
-        };
-    });
-
-    // Event listener for game edit buttons
-    document.querySelectorAll('.game-edit-btn').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            openGameModal(btn.dataset.game-id);
-        };
-    });
-    
-    // Event listener for Add Game
-    const addGameBtn = $('#addGameBtn');
-    if(addGameBtn) addGameBtn.onclick = () => openGameModal();
+    // Not: Olay dinleyicileri (event listeners) artık ana contentArea dinleyicisinde (event delegation)
 }
 
 function openGameModal(gameId = null) {
@@ -941,7 +922,7 @@ $('#categories').addEventListener('click', e => {
     const catId = categoryEl.dataset.id;
     if (e.target.closest('.edit-cat')) openCategoryEditModal(catId);
     else if (e.target.closest('.delete-cat')) {
-        if (!confirm("Are you sure? Bookmarks will be lost forever.")) return; // Simplified deletion
+        if (!confirm("Are you sure? Bookmarks will be lost forever.")) return;
         BOOKMARKS = BOOKMARKS.filter(c => c.id !== catId);
         if (currentView === catId) currentView = 'home';
         handleDataChange();
@@ -950,16 +931,41 @@ $('#categories').addEventListener('click', e => {
     }
 });
 
+// EVENT DELEGATION FOR CONTENT AREA (Includes Games)
 $('#contentArea').addEventListener('click', e => {
+    // 1. Oyun Ekle Butonu
+    if (e.target.closest('#addGameBtn')) {
+        openGameModal();
+        return;
+    }
+    
+    // 2. Oyun Düzenle Butonu
+    const gameEditBtn = e.target.closest('.game-edit-btn');
+    if (gameEditBtn) {
+        e.preventDefault(); e.stopPropagation();
+        openGameModal(gameEditBtn.dataset.gameId);
+        return;
+    }
+
+    // 3. Oyun Tab Butonları
+    const gameTab = e.target.closest('.game-tab');
+    if (gameTab) {
+        activeGameTab = gameTab.dataset.tab;
+        renderHome();
+        return;
+    }
+
+    // 4. Bookmark Ekle Butonu
     const addBtn = e.target.closest('.btn');
-    // Eğer tıklanan Add Game butonu değilse (ona ayrı listener atadık) ve bookmark ekle ise:
-    if (addBtn && addBtn.textContent.includes('+ Add Bookmark') && !addBtn.id.includes('addGameBtn')) {
+    if (addBtn && addBtn.textContent.includes('+ Add Bookmark')) {
         openModalForAdd();
         return;
     }
+
+    // 5. Bookmark Düzenle Butonu
     const editBtn = e.target.closest('.edit-bookmark-btn');
     if (editBtn) {
-        e.preventDefault(); e.stopPropagation(); // Prevent link navigation
+        e.preventDefault(); e.stopPropagation();
         const bookmarkId = editBtn.dataset.bookmarkId;
         const categoryId = editBtn.dataset.categoryId;
         openModalForEdit(bookmarkId, categoryId);
@@ -968,7 +974,7 @@ $('#contentArea').addEventListener('click', e => {
 });
 
 // Close Modals
-[$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit'), $('#cancelSettings')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
+[$('#cancelModal'), $('#cancelCategory'), $('#cancelCategoryEdit'), $('#cancelSettings'), $('#cancelGame')].forEach(btn => btn.onclick = () => btn.closest('.modal').classList.remove('active'));
 document.addEventListener('keydown', e => { 
     if (e.key === 'Escape') {
         [$('#modal'), $('#modalCategory'), $('#modalCategoryEdit'), $('#modalSettings'), $('#modalGame')].forEach(m => m.classList.remove('active')); 
